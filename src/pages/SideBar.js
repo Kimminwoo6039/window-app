@@ -117,6 +117,9 @@ export default function SideBar(status: StatusType) {
               </Button>
             </div>
           </nav>
+          <nav className="mb-11">
+
+          </nav>
         </aside>
       </>
   )

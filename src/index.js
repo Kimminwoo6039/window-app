@@ -1,17 +1,35 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import {HashRouter, useNavigate} from 'react-router-dom';
 import App from './App';
+import './index.css';
 import {Toaster} from "./components/ui/toaster";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <Toaster />
-    <App />
-  </React.StrictMode>
-);
+const NavigationHandler = () => {
+  const navigate = useNavigate();
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+  useEffect(() => {
+    if (window.electron && window.electron.onNavigate) {
+      console.log('Setting up navigation handler in React');
+      window.electron.onNavigate((event, path) => {
+        console.log('Navigating to:', path);
+        navigate(path);
+      });
+    } else {
+      console.log('window.electron or window.electron.onNavigate is not defined in React');
+    }
+  }, [navigate]);
+
+  return null;
+};
+
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
+
+root.render(
+    <HashRouter>
+      <NavigationHandler />
+      <Toaster />
+      <App />
+    </HashRouter>
+);

@@ -18,6 +18,7 @@
     "@testing-library/user-event": "^13.5.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "concurrently": "^8.2.2",
     "lucide-react": "^0.396.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -26,15 +27,16 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
+    "wait-on": "^7.2.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start -p 3031",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "el-start": "electron .",
-    "electron-start": "set ELECTRON_START_URL=http://localhost:3001 && electron .",
+    "electron-start": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
     "electron-pack": "npm run build && electron-builder build -c.extraMetadata.main=build/main.js"
   },
   "eslintConfig": {
