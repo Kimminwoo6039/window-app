@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "main": "public/main.js",
+  "build": {
+    "appId": "com.example.myapp",
+    "productName": "미어캐치",
+    "icon": "public/meer.ico"
+  },
   "homepage": "./",
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",
@@ -16,14 +21,18 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "concurrently": "^8.2.2",
+    "electron-dialog": "^2.0.0",
     "lucide-react": "^0.396.0",
+    "net": "^1.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.0",
     "react-scripts": "5.0.1",
+    "sharp": "^0.33.4",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
@@ -60,6 +69,7 @@
   "devDependencies": {
     "electron": "^31.0.2",
     "electron-builder": "^24.13.3",
+    "path-browserify": "^1.0.1",
     "tailwindcss": "^3.4.4"
   }
 }

@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer,dialog  } = require('electron');
 
 
 contextBridge.exposeInMainWorld('electron', {
@@ -9,11 +9,13 @@ contextBridge.exposeInMainWorld('electron', {
       callback(event, path);
     });
   },
+  dialog: {
+    showMessageBox: (options) => dialog.showMessageBoxSync(options),
+    showOpenDialog: (options) => dialog.showOpenDialogSync(options),
+    showSaveDialog: (options) => dialog.showSaveDialogSync(options),
+  },
   minimize: () => ipcRenderer.send('minimize'),
   maximize: () => ipcRenderer.send('maximize'),
-  close: () => ipcRenderer.send('close')
+  close: () => ipcRenderer.send('close'),
 });
-
-
-
 

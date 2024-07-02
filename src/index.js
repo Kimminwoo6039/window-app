@@ -16,8 +16,15 @@ const NavigationHandler = () => {
         navigate(path);
       });
     } else {
-      console.log('window.electron or window.electron.onNavigate is not defined in React');
+      console.log(
+          'window.electron or window.electron.onNavigate is not defined in React');
     }
+
+    console.log("안녕")
+
+
+    
+    
   }, [navigate]);
 
   return null;
@@ -28,8 +35,8 @@ const root = ReactDOM.createRoot(container);
 
 root.render(
     <HashRouter>
-      <NavigationHandler />
-      <Toaster />
-      <App />
+      <NavigationHandler/>
+      <Toaster/>
+      <App/>
     </HashRouter>
 );

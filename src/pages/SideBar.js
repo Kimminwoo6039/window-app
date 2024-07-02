@@ -1,5 +1,5 @@
 import {Button} from "../components/ui/button";
-import {Bot, SquareTerminal,} from "lucide-react";
+import {Bot, Image, SquareTerminal,} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -27,20 +27,20 @@ export default function SideBar(status: StatusType) {
           <nav className="grid gap-8 p-4">
             <TooltipProvider>
               <Link to={'/'}
-                    className={`rounded-lg w-[100px] h-[100px] p-1 ${location.pathname
+                    className={`rounded-lg w-[100px] h-[110px] p-1 ${location.pathname
                     === '/' && 'bg-neutral-300'} `}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                         variant="ghost"
                         size="icon"
-                        // className={`rounded-lg w-[100px] h-[100px] p-1 ${location.pathname === '/' && 'bg-muted'} `}
+                        className="hover:bg-neutral-300 w-[80px] h-[80px] "
                         aria-label="Playground"
                     >
-                      <SquareTerminal className="w-[80px] h-[60px] m-auto "/>
+                      <img src={require('../images/watch.png')} alt={''} className="w-[50px] h-[50px] m-auto " />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent side="right" sideOffset={5}>
+                  <TooltipContent side="right" sideOffset={8}>
                     실시간 탐지
                   </TooltipContent>
                   <p className="text-sm">실시간 탐지</p>
@@ -49,7 +49,7 @@ export default function SideBar(status: StatusType) {
             </TooltipProvider>
             <TooltipProvider>
               <Link to={'/new'}
-                    className={`rounded-lg w-[100px] h-[100px] p-1 ${location.pathname
+                    className={`rounded-lg w-[100px] h-[120px] p-1 ${location.pathname
                     === '/new' && 'bg-neutral-300'} `}>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -57,14 +57,14 @@ export default function SideBar(status: StatusType) {
 
                         variant="ghost"
                         size="icon"
-                        // className={`rounded-lg w-[100px] h-[100px] p-1 ${location.pathname === '/new' && 'bg-muted'} `}
+                        className="hover:bg-neutral-300 w-[80px] h-[80px] "
                         aria-label="Models"
                     >
-                      <Bot className="w-[80px] h-[60px] m-auto"/>
+                      <img src={require('../images/mask.png')} alt={''} className="w-[80px] h-[50px] m-auto "/>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="right" sideOffset={5}>
-                    Models
+                    검역소
                   </TooltipContent>
                   <p className="text-sm">검역소</p>
                 </Tooltip>
@@ -109,15 +109,19 @@ export default function SideBar(status: StatusType) {
               }
             </div>
             <div className="flex flex-row gap-1">
+              <Link to={'/information'}>
               <Button className="bg-white border-1 hover:bg-neutral-500">
                 <p className="text-black">정보</p>
               </Button>
+              </Link>
+              <Link to={'/setting'}>
               <Button className="bg-white border-1 hover:bg-neutral-500">
                 <p className="text-black">설정</p>
               </Button>
+              </Link>
             </div>
           </nav>
-          <nav className="mb-11">
+          <nav className="mb-14">
 
           </nav>
         </aside>
