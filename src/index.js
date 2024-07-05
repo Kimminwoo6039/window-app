@@ -31,8 +31,13 @@ const NavigationHandler = () => {
           'window.electron or window.electron.onNavigate is not defined in React');
     }
 
+    return () => {
+      console.log("음")
+      window.electron.remove();
+    }
 
-  }, [navigate,window.electron]);
+
+  }, [navigate]);
 
   return null;
 };

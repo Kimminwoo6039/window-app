@@ -1,9 +1,21 @@
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Table } from 'antd';
 
 export default function TableComponent() {
   const [previewSrc, setPreviewSrc] = useState(null);
   const [previewAlt, setPreviewAlt] = useState(null);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/items')
+    .then(response => response.json())
+    .then(data => {
+      setItems(data);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+  }, []);
 
   const ImagePreview = ({ src, alt }) => {
     return (
