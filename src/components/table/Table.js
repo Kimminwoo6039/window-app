@@ -21,13 +21,10 @@ export default function TableComponent() {
 
   // 각 값들을 순서대로 다른 값으로 변경하는 함수
   const handleUpdateEach = (data) => {
-    const updatedNumbers = data; // 배열 복사
 
+    console.log(data);
 
-    for (let i = 0; i < updatedNumbers.length; i++) {
-      console.log(updatedNumbers[0])
-    }
-    setItems(updatedNumbers);
+    return data;
   };
 
   const ImagePreview = ({ src, alt }) => {
@@ -180,7 +177,7 @@ export default function TableComponent() {
                       image: <ImagePreview src={item['EVENT_IMAGE']} alt="Sample Image" />,
                       filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
                       type: <p className="text-[10px] ">{String(item['EVENT_OBJ'])}</p>,
-                      content: <p className="text-[10px] flex ml-1">{decodeURIComponent(item['EVENT_CODE'])}</p>
+                      content: <p className="text-[10px] flex ml-1">{handleUpdateEach(item['EVENT_CODE'])}</p>
                     }
                 ))
               }
