@@ -10,6 +10,7 @@ const NavigationHandler = () => {
 
   useEffect(() => {
     if (window.electron && window.electron.onLocalStorage) {
+      window.electron.onRemoveStr()
       console.log('Setting up navigation handler in React');
       window.electron.onLocalStorage((event, path) => {
         console.log('Navigating to:', path);
@@ -29,11 +30,6 @@ const NavigationHandler = () => {
     } else {
       console.log(
           'window.electron or window.electron.onNavigate is not defined in React');
-    }
-
-    return () => {
-      console.log("음")
-      window.electron.remove();
     }
 
 

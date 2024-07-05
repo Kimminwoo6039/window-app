@@ -25,7 +25,6 @@ function App() {
     let expiration = localStorage.getItem("expiry");
 
     setExpiry(true)
-    console.log("ee")
 
     if (active) {
       SetActivation(true)

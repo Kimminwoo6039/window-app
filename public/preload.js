@@ -10,27 +10,27 @@ contextBridge.exposeInMainWorld('electron', {
     };
     ipcRenderer.on('navigate', eventHandler);
 
-    return () => {
-      ipcRenderer.removeAllListeners('navigate')
-    }
+    // return () => {
+    //   ipcRenderer.removeAllListeners('navigate')
+    // }
   },
   onLocalStorage: (callback) => {
     const eventHandler = (event, path) => {
       callback(event, path);
     };
     ipcRenderer.on('storage', eventHandler);
-    return () => {
-      ipcRenderer.removeAllListeners('storage')
-    }
+
+    // return () => {
+    //   ipcRenderer.removeAllListeners('storage')
+    // }
   },
   dialog: {
     showMessageBox: (options) => dialog.showMessageBoxSync(options),
     showOpenDialog: (options) => dialog.showOpenDialogSync(options),
     showSaveDialog: (options) => dialog.showSaveDialogSync(options),
   },
-  remove: () => {
+  onRemoveStr: () => {
     ipcRenderer.removeAllListeners('storage')
-    ipcRenderer.removeAllListeners('navigate')
   },
   minimize: () => ipcRenderer.send('minimize'),
   maximize: () => ipcRenderer.send('maximize'),

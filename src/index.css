@@ -119,7 +119,9 @@
   background: none;
 }
 
-
+html, body {
+  resize: none; /* 화면 크기 조정 비활성화 */
+}
 
 body {
   background: #F1F1F1;
@@ -190,7 +192,7 @@ body * {
 #minimizeBtn {
   -webkit-app-region: no-drag;
   margin-bottom: 10px;
-  color: white;
+  color: #666666;
   font-size: 10px;
   width: 46px;
   height: 35px;
@@ -207,8 +209,8 @@ body * {
 #closeBtn {
   -webkit-app-region: no-drag;
   background: #25292E;
-  color: white;
-  font-size: 30px;
+  color: #666666;
+  font-size: 15px;
   width: 46px;
   height: 35px;
 }

@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { Table } from 'antd';
+import axios from "axios";
 
 export default function TableComponent() {
   const [previewSrc, setPreviewSrc] = useState(null);
@@ -7,15 +8,27 @@ export default function TableComponent() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    fetch('/api/items')
-    .then(response => response.json())
-    .then(data => {
-      setItems(data);
+    axios.get('http://localhost:5000/api/items')
+    .then(response => {
+      setItems(response.data)
     })
     .catch(error => {
       console.error('Error fetching data:', error);
     });
+
+    handleUpdateEach(items)
   }, []);
+
+  // 각 값들을 순서대로 다른 값으로 변경하는 함수
+  const handleUpdateEach = (data) => {
+    const updatedNumbers = data; // 배열 복사
+
+
+    for (let i = 0; i < updatedNumbers.length; i++) {
+      console.log(updatedNumbers[0])
+    }
+    setItems(updatedNumbers);
+  };
 
   const ImagePreview = ({ src, alt }) => {
     return (
@@ -40,70 +53,72 @@ export default function TableComponent() {
   };
 
   const dataSource = [
-    {
-      key: '1',
-      date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-      image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-      type: <p className="text-[10px] ">탐지</p>,
-      content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    },
-    {
-      key: '2',
-      date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-      image: <ImagePreview src={require('../../images/user.png')} alt="Sample Image" />,
-      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-      type: <p className="text-[10px] ">탐지</p>,
-      content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    },
-    {
-      key: '3',
-      date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-      image: <ImagePreview src={require('../../images/BTN_storage.png')} alt="Sample Image" />,
-      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-      type: <p className="text-[10px] ">탐지</p>,
-      content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    },
-    {
-      key: '4',
-      date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-      image: <ImagePreview src={require('../../images/check.png')} alt="Sample Image" />,
-      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-      type: <p className="text-[10px] ">탐지</p>,
-      content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    },
-    {
-      key: '5',
-      date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-      image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-      type: <p className="text-[10px] ">탐지</p>,
-      content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    },
-    {
-      key: '6',
-      date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-      image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-      type: <p className="text-[10px] ">탐지</p>,
-      content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    },
-    {
-      key: '7',
-      date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-      image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-      type: <p className="text-[10px] ">탐지</p>,
-      content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    },
-    {
-      key: '8',
-      date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-      image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-      type: <p className="text-[10px] ">탐지</p>,
-      content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    },
+    items.map(item => (
+        {
+          key: item.HISTORY_SEQ,
+          date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
+          image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
+          filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
+          type: <p className="text-[10px] ">탐지</p>,
+          content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
+        }
+      ))
+    // {
+    //   key: '2',
+    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
+    //   image: <ImagePreview src={require('../../images/user.png')} alt="Sample Image" />,
+    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
+    //   type: <p className="text-[10px] ">탐지</p>,
+    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
+    // },
+    // {
+    //   key: '3',
+    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
+    //   image: <ImagePreview src={require('../../images/BTN_storage.png')} alt="Sample Image" />,
+    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
+    //   type: <p className="text-[10px] ">탐지</p>,
+    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
+    // },
+    // {
+    //   key: '4',
+    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
+    //   image: <ImagePreview src={require('../../images/check.png')} alt="Sample Image" />,
+    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
+    //   type: <p className="text-[10px] ">탐지</p>,
+    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
+    // },
+    // {
+    //   key: '5',
+    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
+    //   image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
+    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
+    //   type: <p className="text-[10px] ">탐지</p>,
+    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
+    // },
+    // {
+    //   key: '6',
+    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
+    //   image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
+    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
+    //   type: <p className="text-[10px] ">탐지</p>,
+    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
+    // },
+    // {
+    //   key: '7',
+    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
+    //   image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
+    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
+    //   type: <p className="text-[10px] ">탐지</p>,
+    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
+    // },
+    // {
+    //   key: '8',
+    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
+    //   image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
+    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
+    //   type: <p className="text-[10px] ">탐지</p>,
+    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
+    // },
     // Repeat for other data entries
   ];
 
@@ -157,7 +172,18 @@ export default function TableComponent() {
           <Table
               className="p-0"
               rowSelection={rowSelection}
-              dataSource={dataSource}
+              dataSource={
+                items.map(item => (
+                    {
+                      key: item['HISTORY_SEQ'],
+                      date: <p className="text-[10px] ">{item['REG_DATE']}</p>,
+                      image: <ImagePreview src={item['EVENT_IMAGE']} alt="Sample Image" />,
+                      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
+                      type: <p className="text-[10px] ">{String(item['EVENT_OBJ'])}</p>,
+                      content: <p className="text-[10px] flex ml-1">{decodeURIComponent(item['EVENT_CODE'])}</p>
+                    }
+                ))
+              }
               columns={columns}
               pagination={false}
               scroll={{ x: 600, y: 300 }}

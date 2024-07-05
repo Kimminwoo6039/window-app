@@ -28,10 +28,13 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.19.0",
     "axios": "^1.7.2",
+    "better-sqlite3": "^11.1.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "concurrently": "^8.2.2",
+    "cors": "^2.8.5",
     "electron-dialog": "^2.0.0",
+    "express": "^4.19.2",
     "lucide-react": "^0.396.0",
     "net": "^1.0.2",
     "react": "^18.3.1",
@@ -52,7 +55,7 @@
     "eject": "react-scripts eject",
     "el-start": "electron .",
     "electron-start": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
-    "electron-pack": "npm run build && electron-builder build -c.extraMetadata.main=build/main.js",
+    "electron-pack": "npm run build && electron-builder build -c.extraMetadata.main=build/main.js && npm rebuild better-sqlite3 && node ./server.js",
     "electron-pack-mac": "npm run build && electron-builder build --mac"
   },
   "eslintConfig": {
