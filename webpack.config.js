@@ -9,4 +9,7 @@ module.exports = {
       "path": require.resolve("path-browserify")
     }
   },
+  eslint:{
+    ignoreDuringBuilds: true
+  }
 };

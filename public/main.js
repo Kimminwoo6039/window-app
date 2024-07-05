@@ -35,8 +35,8 @@ ipcMain.on('close', () => {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 900,
+    height: 600,
     title: "MeerCat.ch",
     // titleBarStyle:"hidden",
     frame: false,
@@ -53,22 +53,31 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     // mainWindow가 show() 상태일 때만 실행
     if (mainWindow.isVisible()) {
+      // startServiceLogic()
       console.log(1)
     }
   });
 
-  // 팝업이 올라왔을때
+  // Prevent maximize on double-clicking the title bar
+  mainWindow.on('maximize', () => {
+    mainWindow.unmaximize();
+  });
 
+  // 팝업이 올라왔을때
   ['show', 'restore'].forEach(
       event => mainWindow.on(event, () => {
+        // startServiceLogic()
         console.log("open")
       }));
 
   // 팝업이 내려갔을때
 
-  ['hide', 'maximize', 'minimize'].forEach(
+  ['hide', 'minimize'].forEach(
       event => mainWindow.on(event, () => {
+        // stopServiceLogic()
         console.log('close')
+        mainWindow.webContents.send('storage', 'loginStatus');
+        mainWindow.webContents.send('navigate', '/pin/check');
       }));
 
   /*
@@ -123,20 +132,25 @@ function createTray() {
   const contextMenu = Menu.buildFromTemplate([
     {
       label: '미어캐치 열기', click: () => {
-        mainWindow.webContents.send('navigate', '/');
+        mainWindow.webContents.send('navigate', '/pin/check');
         toggleWindow()
       }
     },
     {
       label: '환결성정', click: () => {
-        mainWindow.webContents.send('navigate', '/setting');
+        mainWindow.webContents.send('navigate', '/pin/check');
         toggleWindow()
       }
     },
     {
       label: '계정정보', click: () => {
-        mainWindow.webContents.send('navigate', '/information');
+        mainWindow.webContents.send('navigate', '/pin/check');
         toggleWindow()
+      }
+    },
+    {
+      label: '종료', click: () => {
+        app.quit()
       }
     },
     // { label: 'Quit', click: () => app.quit() }
@@ -146,8 +160,7 @@ function createTray() {
   tray.setContextMenu(contextMenu);
   ['double-click'].forEach(
       event => tray.on(event, () => {
-
-        mainWindow.webContents.send('navigate', '/');
+        mainWindow.webContents.send('navigate', '/pin/check');
         toggleWindow()
       }));
 }

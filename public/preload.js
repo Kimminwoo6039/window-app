@@ -1,10 +1,19 @@
 const { contextBridge, ipcRenderer,dialog  } = require('electron');
 
 
+ipcRenderer.setMaxListeners(20);
+
 contextBridge.exposeInMainWorld('electron', {
   onNavigate: (callback) => {
     console.log('Listening for navigate events in preload');
     ipcRenderer.on('navigate', (event, path) => {
+      console.log('Received navigate event:', path);
+      callback(event, path);
+    });
+  },
+  onLocalStorage: (callback) => {
+    console.log('Listening for navigate events in preload');
+    ipcRenderer.on('storage', (event, path) => {
       console.log('Received navigate event:', path);
       callback(event, path);
     });

@@ -9,6 +9,17 @@ const NavigationHandler = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (window.electron && window.electron.onLocalStorage) {
+      console.log('Setting up navigation handler in React');
+      window.electron.onLocalStorage((event, path) => {
+        console.log('Navigating to:', path);
+        localStorage.removeItem(path)
+      });
+    } else {
+      console.log(
+          'window.electron or window.electron.onNavigate is not defined in React');
+    }
+
     if (window.electron && window.electron.onNavigate) {
       console.log('Setting up navigation handler in React');
       window.electron.onNavigate((event, path) => {
@@ -20,12 +31,8 @@ const NavigationHandler = () => {
           'window.electron or window.electron.onNavigate is not defined in React');
     }
 
-    console.log("안녕")
 
-
-    
-    
-  }, [navigate]);
+  }, [navigate,window.electron]);
 
   return null;
 };

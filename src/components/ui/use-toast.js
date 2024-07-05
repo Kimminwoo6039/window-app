@@ -49,11 +49,11 @@ export const reducer = (state, action) => {
       return {
         ...state,
         toasts: state.toasts.map((t) =>
-          t.id === action.toast.id ? { ...t, ...action.toast } : t),
+            t.id === action.toast.id ? {...t, ...action.toast} : t),
       };
 
     case "DISMISS_TOAST": {
-      const { toastId } = action
+      const {toastId} = action
 
       // ! Side effects ! - This could be extracted into a dismissToast() action,
       // but I'll keep it here for simplicity
@@ -68,12 +68,12 @@ export const reducer = (state, action) => {
       return {
         ...state,
         toasts: state.toasts.map((t) =>
-          t.id === toastId || toastId === undefined
-            ? {
-                ...t,
-                open: false,
-              }
-            : t),
+            t.id === toastId || toastId === undefined
+                ? {
+                  ...t,
+                  open: false,
+                }
+                : t),
       };
     }
     case "REMOVE_TOAST":
@@ -92,7 +92,7 @@ export const reducer = (state, action) => {
 
 const listeners = []
 
-let memoryState = { toasts: [] }
+let memoryState = {toasts: []}
 
 function dispatch(action) {
   memoryState = reducer(memoryState, action)
@@ -107,11 +107,11 @@ function toast({
   const id = genId()
 
   const update = (props) =>
-    dispatch({
-      type: "UPDATE_TOAST",
-      toast: { ...props, id },
-    })
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+      dispatch({
+        type: "UPDATE_TOAST",
+        toast: {...props, id},
+      })
+  const dismiss = () => dispatch({type: "DISMISS_TOAST", toastId: id})
 
   dispatch({
     type: "ADD_TOAST",
@@ -120,7 +120,9 @@ function toast({
       id,
       open: true,
       onOpenChange: (open) => {
-        if (!open) dismiss()
+        if (!open) {
+          dismiss()
+        }
       },
     },
   })
@@ -148,8 +150,8 @@ function useToast() {
   return {
     ...state,
     toast,
-    dismiss: (toastId) => dispatch({ type: "DISMISS_TOAST", toastId }),
+    dismiss: (toastId) => dispatch({type: "DISMISS_TOAST", toastId}),
   };
 }
 
-export { useToast, toast }
+export {useToast, toast}
