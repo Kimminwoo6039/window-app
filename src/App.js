@@ -10,6 +10,7 @@ import LicenceRegister from "./pages/licence/LicenceRegister";
 import PinRegister from "./pages/pin/PinRegister";
 import PinCheck from "./pages/pin/PinCheck";
 import PinExpiry from "./pages/pin/PinExpiry";
+import {NetworkStatusProvider} from "./components/NetworkStatus";
 
 function App() {
   const [status, setStatus] = useState(false);
@@ -47,6 +48,7 @@ function App() {
   }, [navigate]);
 
   return (
+      <NetworkStatusProvider>
       <>
         {
           activation === true
@@ -109,6 +111,7 @@ function App() {
               </div>
         }
       </>
+      </NetworkStatusProvider>
   )
       ;
 }

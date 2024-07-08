@@ -1,38 +1,89 @@
-import React, {useEffect, useRef, useState} from 'react';
-import { Table } from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Table} from 'antd';
 import axios from "axios";
+import {useNetworkStatus} from "../NetworkStatus";
 
-export default function TableComponent() {
+export default function TableComponent({items}) {
   const [previewSrc, setPreviewSrc] = useState(null);
   const [previewAlt, setPreviewAlt] = useState(null);
-  const [items, setItems] = useState([]);
+  // const [items, setItems] = useState([]);
+  // const {isOnline} = useNetworkStatus()
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/items')
-    .then(response => {
-      setItems(response.data)
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-    });
-
-    handleUpdateEach(items)
+    // console.log(isOnline)
+    // axios.get('http://localhost:5000/api/items')
+    // .then(response => {
+    //   setItems(response.data)
+    // })
+    // .catch(error => {
+    //   console.error('Error fetching data:', error);
+    // });
   }, []);
 
   // 각 값들을 순서대로 다른 값으로 변경하는 함수
   const handleUpdateEach = (data) => {
 
-    console.log(data);
+    if (typeof data === 'string') {
+      for (let i = 0; i < data.length; i++) {
+        // 공백 먼저 값 변경
+        let space = data.split(' ');
+        const Arrays = space.map((item) => {
+          if (item === '2') {
+            return '둔부';
+          }
+          if (item === '3') {
+            return '여자 가슴';
+          }
+          if (item === '4') {
+            return '여자 성기';
+          }
+          if (item === '6') {
+            return '항문';
+          }
+          if (item === '14') {
+            return '남자 성기';
+          }
+          return item; // 다른 값은 변경하지 않음
+        })
 
-    return data;
+        // 문자열을 배열로 변환
+        // ,(쉼표) 기준 문자 변환
+        const valuesArray = Arrays.toString().split(',');
+        const newValuesArray = valuesArray.map(item => {
+          if (item === '2') {
+            return '둔부';
+          }
+          if (item === '3') {
+            return '여자 가슴';
+          }
+          if (item === '4') {
+            return '여자 성기';
+          }
+          if (item === '6') {
+            return '항문';
+          }
+          if (item === '14') {
+            return '남자 성기';
+          }
+          return item; // 다른 값은 변경하지 않음
+        });
+
+        // 배열을 다시 문자열로 변환
+        return newValuesArray.join(',');
+      }
+    }
   };
 
-  const ImagePreview = ({ src, alt }) => {
+
+  const ImagePreview = ({src, alt}) => {
     return (
         <img
             src={src}
             alt={alt}
-            className="h-[35px] m-auto"
+            style={{
+              transition: 'transform 0.1s ease, opacity 0.1s ease',
+            }}
+            className="h-[35px] w-[50px] m-auto"
             onMouseEnter={() => handleMouseEnter(src, alt)}
             onMouseLeave={handleMouseLeave}
         />
@@ -48,76 +99,6 @@ export default function TableComponent() {
     setPreviewSrc(null);
     setPreviewAlt(null);
   };
-
-  const dataSource = [
-    items.map(item => (
-        {
-          key: item.HISTORY_SEQ,
-          date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-          image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-          filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-          type: <p className="text-[10px] ">탐지</p>,
-          content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-        }
-      ))
-    // {
-    //   key: '2',
-    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-    //   image: <ImagePreview src={require('../../images/user.png')} alt="Sample Image" />,
-    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-    //   type: <p className="text-[10px] ">탐지</p>,
-    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    // },
-    // {
-    //   key: '3',
-    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-    //   image: <ImagePreview src={require('../../images/BTN_storage.png')} alt="Sample Image" />,
-    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-    //   type: <p className="text-[10px] ">탐지</p>,
-    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    // },
-    // {
-    //   key: '4',
-    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-    //   image: <ImagePreview src={require('../../images/check.png')} alt="Sample Image" />,
-    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-    //   type: <p className="text-[10px] ">탐지</p>,
-    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    // },
-    // {
-    //   key: '5',
-    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-    //   image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-    //   type: <p className="text-[10px] ">탐지</p>,
-    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    // },
-    // {
-    //   key: '6',
-    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-    //   image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-    //   type: <p className="text-[10px] ">탐지</p>,
-    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    // },
-    // {
-    //   key: '7',
-    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-    //   image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-    //   type: <p className="text-[10px] ">탐지</p>,
-    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    // },
-    // {
-    //   key: '8',
-    //   date: <p className="text-[10px] ">2024-04-22 14:00:50</p>,
-    //   image: <ImagePreview src={require('../../images/BTN_detection.png')} alt="Sample Image" />,
-    //   filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-    //   type: <p className="text-[10px] ">탐지</p>,
-    //   content: <p className="text-[10px] flex ml-1">여성 유방 노출,여성 생식기 노출,배노출</p>
-    // },
-    // Repeat for other data entries
-  ];
 
   const columns = [
     {
@@ -174,21 +155,26 @@ export default function TableComponent() {
                     {
                       key: item['HISTORY_SEQ'],
                       date: <p className="text-[10px] ">{item['REG_DATE']}</p>,
-                      image: <ImagePreview src={item['EVENT_IMAGE']} alt="Sample Image" />,
-                      filename: <p className="text-[10px] ">1171321456849793.jpg</p>,
-                      type: <p className="text-[10px] ">{String(item['EVENT_OBJ'])}</p>,
-                      content: <p className="text-[10px] flex ml-1">{handleUpdateEach(item['EVENT_CODE'])}</p>
+                      image: <ImagePreview src={item['EVENT_IMAGE']}
+                                           alt="Sample Image"/>,
+                      filename: <p
+                          className="text-[10px] ">1171321456849793.jpg</p>,
+                      type: <p className="text-[10px] ">{String(
+                          item['EVENT_OBJ'])}</p>,
+                      content: <p
+                          className="text-[10px] flex ml-1">{handleUpdateEach(
+                          item['EVENT_CODE'])}</p>
                     }
                 ))
               }
               columns={columns}
               pagination={false}
-              scroll={{ x: 600, y: 300 }}
+              scroll={{x: 600, y: 300}}
           />
         </div>
         {previewSrc && (
             <div className="preview-container">
-              <img src={previewSrc} alt={previewAlt} className="preview-image" />
+              <img src={previewSrc} alt={previewAlt} className="preview-image"/>
             </div>
         )}
       </div>

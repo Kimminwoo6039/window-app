@@ -40,6 +40,7 @@ function createWindow() {
     title: "MeerCat.ch",
     // titleBarStyle:"hidden",
     frame: false,
+    resizable:false,
     webPreferences: {
       preload: path.join(__dirname, '/preload.js'),
       nodeIntegration: true,
@@ -48,6 +49,20 @@ function createWindow() {
     autoHideMenuBar: true,
     icon: path.join(__dirname, '/meer.png')
   });
+
+  if (!app.requestSingleInstanceLock()) {
+    app.quit(); // 두 번째 인스턴스가 실행되려고 하면 애플리케이션 종료
+  } else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+      // 이미 실행 중인 인스턴스가 있을 때 실행되는 코드
+      if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.show();
+        mainWindow.focus();
+      }
+      mainWindow.show();
+      mainWindow.focus();
+    });
+  }
 
   // 메인 창이 화면에 표시될 준비가 되었을 때
   mainWindow.once('ready-to-show', () => {
@@ -109,11 +124,8 @@ function startServiceLogic() {
   intervalId = setInterval(async () => {
     console.log('Fetching data...');
 
-
-  },5000);
+  }, 5000);
 }
-
-
 
 function stopServiceLogic() {
   // 여기에 서비스 로직을 중지하는 로직을 구현
@@ -211,7 +223,7 @@ function allQuit() {
 // 알림 메시지
 function showNotification() {
   const notification = new Notification({
-    subtitle:"ddd",
+    subtitle: "ddd",
     title: 'MeerCat.ch',
     body: '유해 콘텐츠가 탐지 되었습니다.',
     icon: path.join(__dirname, '/meer.png')

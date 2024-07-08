@@ -54,8 +54,8 @@
   /*max-height: 400px;*/
   width: 250px;
   height: 200px;
-}
 
+}
 
 
 /* Checkbox hover and focus state */
@@ -86,7 +86,7 @@
   border-color: #9D1F32 !important; /* Border color on hover */
 }
 
-.ant-table-selection + .ant-checkbox-input:checked{
+.ant-table-selection + .ant-checkbox-input:checked {
   background-color: #9D1F32 !important; /* Border color on hover */
 }
 
@@ -113,9 +113,13 @@
   border-color: #9D1F32 !important; /* Border color when checked */
 }
 
+.ant-table-cell.ant-table-selection-column img {
+  transition: transform 0.3s ease, opacity 0.3s ease !important;
+  will-change: transform, opacity !important; /* will-change 속성 추가 */
+}
 
 
-:where(.css-dev-only-do-not-override-f7vrd6).ant-table-wrapper .ant-table-tbody .ant-table-row.ant-table-row-selected >.ant-table-cell {
+:where(.css-dev-only-do-not-override-f7vrd6).ant-table-wrapper .ant-table-tbody .ant-table-row.ant-table-row-selected > .ant-table-cell {
   background: none;
 }
 
@@ -262,10 +266,6 @@ body * {
     --ring: 348 66% 37%; /* #9D1F32 in HSL: hsl(348, 66%, 37%) */
   }
 }
-
-
-
-
 
 
 @layer base {
