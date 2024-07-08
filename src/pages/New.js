@@ -5,6 +5,7 @@ import TableComponent from '../components/table/Table';
 import axios from 'axios';
 import { useNetworkStatus } from '../components/NetworkStatus';
 import { useNavigate } from 'react-router-dom';
+import BlankTable from "../components/BlankTable";
 
 export default function New() {
   const [search, setSearch] = useState('');
@@ -65,8 +66,8 @@ export default function New() {
             </form>
           </div>
           <div className="mt-6"></div>
-          <div className="w-[758px] h-[315px] lg:w-full lg:h-full p-1">
-            <TableComponent items={items} />
+          <div className="w-[740px] h-[315px] lg:w-full lg:h-full p-1">
+            {items.length === 0 ? <BlankTable />  : <TableComponent items={items} />}
           </div>
         </main>
         <div className="flex flex-row justify-end gap-2 m-10">
