@@ -18,19 +18,19 @@ export default function Home(status: StatusType) {
 
   return (
       <>
-        <main className="flex flex-col m-auto justify-center items-center ">
-          <form onSubmit={onSubmit}>
-                <button>만료</button>
-          </form>
+        <main className="flex flex-col mt-28 justify-center items-center ">
+          {/*<form onSubmit={onSubmit}>*/}
+          {/*      <Button>라이센스 만료</Button>*/}
+          {/*</form>*/}
 
           {status.props === true
               ?
               <>
-                <img src={require('../images/check.png')} alt={""} width={190}
+                <img src={require('../images/success.png')} alt={""} width={190}
                      height={190}/>
-                <div className="flex flex-col mt-16">
+                <div className="flex flex-col mt-4">
                   <div>
-                    <p className="text-[30px] text-[#9E1313]">실시간
+                    <p className="text-[30px] text-[#007A5A]">실시간
                       탐지를 <strong>사용중</strong>입니다.</p>
                   </div>
                   <div className="mt-1">
@@ -44,7 +44,7 @@ export default function Home(status: StatusType) {
               <>
                 <img src={require('../images/check.png')} alt={""} width={190}
                      height={190}/>
-                <div className="flex flex-col mt-16">
+                <div className="flex flex-col mt-4">
                   <div>
                     <p className="text-[30px] text-[#9E1313]">실시간
                       탐지가 <strong>중단</strong>되었습니다.</p>

@@ -71,14 +71,14 @@ export default function SideBar(status: StatusType) {
             </TooltipProvider>
           </nav>
           <nav className="mt-auto gap-0 p-1">
-            <div className="flex flex-row items-center m-auto w-[100px] h-[30px] justify-center gap-2">
+            <div className="flex flex-row items-center m-auto w-[100px] h-[30px] justify-center gap-1">
               <p className="text-[12px] w-[60px] text-[#F5F5F5]">실시간 탐지</p>
               {/*<Label htmlFor="airplane-mode" className="">실시간탐지</Label>*/}
               {
                 status.props === false
                     ?
                     <>
-                      <img src={require('../images/Off.png')} alt=""
+                      <img src={require('../images/Off.png')} alt="" className="cursor-pointer"
                            width="24px" height="12px" onClick={() => {
                         toast({
                           title: "실시간 탐지를 사용중입니다. ",
@@ -89,7 +89,7 @@ export default function SideBar(status: StatusType) {
                     </>
                     :
                     <>
-                      <img src={require('../images/On.png')} alt="" width="24px"
+                      <img src={require('../images/On.png')} alt="" width="24px" className="cursor-pointer"
                            height="24px" onClick={() => {
                         toast({
                           title: "실시간 탐지가 중단되었습니다. ",

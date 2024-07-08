@@ -13,7 +13,7 @@ import PinExpiry from "./pages/pin/PinExpiry";
 import {NetworkStatusProvider} from "./components/NetworkStatus";
 
 function App() {
-  const [status, setStatus] = useState(false);
+  const [status, setStatus] = useState(true);
   const navigate = useNavigate();
   // let result = Number(0)
   const [activation, SetActivation] = useState(false);

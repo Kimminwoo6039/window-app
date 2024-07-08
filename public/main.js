@@ -16,6 +16,12 @@ let mainWindow;
 let tray;
 let intervalId;
 
+let iconIndex = 0;
+const icons = [
+  path.join(__dirname, '/meer_1.png'),
+  path.join(__dirname, '/meer.png'),
+];
+
 // 타이틀바 이벤트 처리
 ipcMain.on('minimize', () => {
   mainWindow.minimize();
@@ -170,11 +176,19 @@ function createTray() {
 
   tray.setToolTip('MeerCat.ch');
   tray.setContextMenu(contextMenu);
+  animateIcon();
   ['double-click'].forEach(
       event => tray.on(event, () => {
         mainWindow.webContents.send('navigate', '/pin/check');
         toggleWindow()
       }));
+}
+
+function animateIcon() {
+  setInterval(() => {
+    iconIndex = (iconIndex + 1) % icons.length;
+    tray.setImage(icons[iconIndex]);
+  }, 500); // 500ms 간격으로 아이콘 변경
 }
 
 // 현재 중복된 화면 안생기게 하는 로직

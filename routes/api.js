@@ -4,7 +4,7 @@ const Database = require('better-sqlite3');
 const url = require('url');
 
 const db = new Database('meercatch.db',
-    {encoding: 'unicode', verbose: console.log});
+    {encoding: 'unicode', verbose: console.log,readonly : false});
 db.pragma("journal_mode = WAL");
 // Route to get all users
 router.get('/items', (req, res) => {

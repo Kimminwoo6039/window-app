@@ -1,18 +1,27 @@
 import {Button} from "../../components/ui/button";
-import React, {FormEvent} from "react";
+import React, {FormEvent, useState} from "react";
 import {Input} from "../../components/ui/input";
-import LicenceInsert_old from "./LicenceInsert_old";
-import {Image} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 
 export default function LicenceRegister() {
 
   const navigate = useNavigate()
+  const [value, setValue] = useState('');
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     console.log("등록")
     navigate('/pin/register',{replace:false})
   }
+
+  const handleInputChange = (e) => {
+    let inputValue = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); // 대문자와 숫자 외의 문자 제거
+    if (inputValue.length > 12) inputValue = inputValue.slice(0, 12); // 최대 12자리 제한
+
+    // 4글자 단위로 하이픈 추가
+    const formattedValue = inputValue.match(/.{1,4}/g)?.join('-') || '';
+
+    setValue(formattedValue);
+  };
 
   return (
       <>
@@ -51,7 +60,8 @@ export default function LicenceRegister() {
                 <div className="mt-4"></div>
                 <hr/>
                 <div className="mt-4"></div>
-                <Input type="text" placeholder="라이선스 키"
+                <Input type="text" placeholder="라이선스 키"  maxLength="15"  value={value}
+                       onChange={handleInputChange}
                        className="w-[280px] h-[34px] rounded-sm"/>
               </div>
               <div className="m-4"></div>

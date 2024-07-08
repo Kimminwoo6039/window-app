@@ -22,15 +22,15 @@ export default function LicenceClear() {
       closeButton.click();
     }
     localStorage.clear()
-    navigate('/',{replace:false})
+    navigate('/', {replace: false})
   }
-
 
   return (
       <>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="rounded-sm w-[110px] h-[34px] bg-[#9E1313]"><p className="text-[12px] text-[#FFFFFF]">라이선스 해제</p></Button>
+            <Button className="rounded-sm w-[110px] h-[34px] bg-[#9E1313]"><p
+                className="text-[12px] text-[#FFFFFF]">라이선스 해제</p></Button>
           </DialogTrigger>
           <DialogContent className="w-[400px] h-[250px] bg-[#F1F1F1]">
             <form onSubmit={onSubmit}>
@@ -55,12 +55,13 @@ export default function LicenceClear() {
                   <Button className="w-[168px] h-[34px] rounded-sm"
                           type="submit"><p
                       className="text-[12px] text-[#FFFFFF]">해제</p></Button>
-                  <Button
-                      className="w-[168px] h-[34px] rounded-sm bg-[#444444]">
-                    <p
-                        className="text-[12px] text-[#FFFFFF]">취소</p>
-                    <DialogClose id="modalClose"/>
-                  </Button>
+                  <DialogClose>
+                    <Button type="button"
+                            className="w-[168px] h-[34px] rounded-sm bg-[#444444]">
+                      <p className="text-[12px] text-[#FFFFFF]">취소</p>
+                      {/*<DialogClose id="modalClose"/>*/}
+                    </Button>
+                  </DialogClose>
                 </DialogFooter>
               </div>
               {/*<p className="text-[10px] text-red-500 flex justify-center">※ 라이선스 키가 일치하지 않습니다.</p>*/}
