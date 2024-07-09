@@ -47,6 +47,7 @@ function App() {
 
   }, [navigate]);
 
+  
   return (
       <NetworkStatusProvider>
       <>
