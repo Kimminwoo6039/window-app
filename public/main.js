@@ -16,6 +16,7 @@ let mainWindow;
 let tray;
 let intervalId;
 
+
 let iconIndex = 0;
 const icons = [
   path.join(__dirname, '/meer_1.png'),
