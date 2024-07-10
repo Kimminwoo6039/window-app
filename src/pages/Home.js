@@ -32,7 +32,7 @@ export default function Home(status: StatusType) {
                 <div className="flex flex-col mt-4">
                   <div>
                     <p className="text-[30px] text-[#007A5A]">실시간
-                      탐지를 <strong>사용중1</strong>입니다.</p>
+                      탐지를 <strong>사용중</strong>입니다.</p>
                   </div>
                   <div className="mt-1">
                     <p className="text-[13px] text-[#6D6D6D]">
@@ -48,7 +48,7 @@ export default function Home(status: StatusType) {
                 <div className="flex flex-col mt-4">
                   <div>
                     <p className="text-[30px] text-[#9E1313]">실시간
-                      탐지가 <strong>중단1</strong>되었습니다.</p>
+                      탐지가 <strong>중단</strong>되었습니다.</p>
                   </div>
                   <div className="mt-1">
                     <p className="text-[13px] text-[#6D6D6D]">
