@@ -6,7 +6,14 @@
   "build": {
     "appId": "com.example.myapp",
     "productName": "미어캐치",
-    "icon": "public/meer.ico"
+    "icon": "public/meer.ico",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Kimminwoo6039",
+        "repo": "Eletron-app"
+      }
+    ]
   },
   "homepage": "./",
   "dependencies": {
