@@ -6,6 +6,7 @@ interface StatusType {
   props: boolean;
 }
 
+
 export default function Home(status: StatusType) {
   let navigate = useNavigate();
 
