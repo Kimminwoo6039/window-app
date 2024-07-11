@@ -34,6 +34,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.19.0",
+    "auto-launch": "^5.0.6",
     "axios": "^1.7.2",
     "better-sqlite3": "^11.1.2",
     "class-variance-authority": "^0.7.0",
@@ -42,6 +43,7 @@
     "cors": "^2.8.5",
     "electron-dialog": "^2.0.0",
     "electron-log": "^5.1.5",
+    "electron-store": "^8.2.0",
     "electron-updater": "^6.2.1",
     "express": "^4.19.2",
     "lucide-react": "^0.396.0",
@@ -50,7 +52,9 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.0",
     "react-scripts": "5.0.1",
+    "sequelize": "^6.37.3",
     "sharp": "^0.33.4",
+    "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
@@ -65,7 +69,7 @@
     "el-start": "electron .",
     "electron-start": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
     "electron-pack": "npm run build && electron-builder build -c.extraMetadata.main=build/main.js && npm rebuild better-sqlite3 && node ./server.js",
-    "electron-pack-mac": "npm run build && electron-builder build --mac"
+    "start-server": "npm rebuild better-sqlite3 && node ./server.js"
   },
   "eslintConfig": {
     "extends": [

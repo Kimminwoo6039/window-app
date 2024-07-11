@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer,dialog  } = require('electron');
 
 
-ipcRenderer.setMaxListeners(5);
+ipcRenderer.setMaxListeners(30);
 
 contextBridge.exposeInMainWorld('electron', {
   onNavigate: (callback) => {
@@ -23,6 +23,13 @@ contextBridge.exposeInMainWorld('electron', {
     // return () => {
     //   ipcRenderer.removeAllListeners('storage')
     // }
+  },
+  send: (channel, data) => {
+    // 메인 프로세스로 메시지 전송
+    ipcRenderer.send(channel, data);
+  },
+  fetchDataFromDB: () => {
+    return ipcRenderer.invoke('fetch-data-from-db');
   },
   dialog: {
     showMessageBox: (options) => dialog.showMessageBoxSync(options),

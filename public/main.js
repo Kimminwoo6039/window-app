@@ -4,24 +4,88 @@ const {
   Tray,
   Menu,
   ipcMain,
+  dialog,
   Notification, screen, desktopCapturer,
-} = require(
-    'electron');
+} = require('electron');
 const path = require('path');
 const url = require('url');
-const fs = require('fs');
-const os = require('os');
-const sharp = require('sharp');
 let mainWindow;
 let tray;
 let intervalId;
-
-
+const Store = require('electron-store');
 let iconIndex = 0;
+
 const icons = [
   path.join(__dirname, '/meer_1.png'),
   path.join(__dirname, '/meer.png'),
 ];
+const {exec} = require('child_process');
+const sqlite3 = require('sqlite3').verbose();
+let db;
+
+
+function abc() {
+
+  console.log("ready")
+
+  // SQLite 데이터베이스 파일 경로
+  const dbPath = path.join(__dirname, '../meercatch.db');
+
+  // SQLite 데이터베이스 연결
+   db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
+    if (err) {
+      console.error('Error opening database:', err.message);
+    } else {
+      console.log('Connected to the SQLite database.');
+    }
+  });
+
+
+}
+
+// IPC to fetch data from the database
+ipcMain.handle('fetch-data-from-db', async (event) => {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT * FROM T_HISTORY', (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+});
+
+// 데이터베이스 파일 경로 설정
+
+// SQLite3 데이터베이스 연결
+// db = new Database('meercatch.db');
+// db.pragma("journal_mode = WAL");
+
+// IPC를 통해 React로 데이터 전송하기
+// ipcMain.handle('fetch-data-from-db', (event) => {
+//   return db.prepare('SELECT * FROM T_HISTORY').all();
+// });
+
+const store = new Store({
+  defaults: {
+    autoLaunch: true, // default to true
+  },
+
+});
+
+const onUpdateAutoLaunch = (value) => {
+  store.set('autoLaunch', value);
+  app.setLoginItemSettings({
+    openAtLogin: value,
+    openAsHidden: false,
+  });
+};
+
+
+ipcMain.on('update-auto-launch', (event, value) => {
+  onUpdateAutoLaunch(value);
+});
 
 // 타이틀바 이벤트 처리
 ipcMain.on('minimize', () => {
@@ -40,14 +104,16 @@ ipcMain.on('close', () => {
   mainWindow.hide();
 });
 
+
+
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 900,
     height: 600,
     title: "MeerCat.ch",
-    // titleBarStyle:"hidden",
     frame: false,
-    resizable:false,
+    resizable: false,
     webPreferences: {
       preload: path.join(__dirname, '/preload.js'),
       nodeIntegration: true,
@@ -57,26 +123,28 @@ function createWindow() {
     icon: path.join(__dirname, '/meer.png')
   });
 
+
   if (!app.requestSingleInstanceLock()) {
     app.quit(); // 두 번째 인스턴스가 실행되려고 하면 애플리케이션 종료
   } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
-      // 이미 실행 중인 인스턴스가 있을 때 실행되는 코드
       if (mainWindow) {
-        if (mainWindow.isMinimized()) mainWindow.show();
+        if (mainWindow.isMinimized()) {
+          mainWindow.show();
+        }
         mainWindow.focus();
       }
       mainWindow.show();
       mainWindow.focus();
     });
   }
-
   // 메인 창이 화면에 표시될 준비가 되었을 때
   mainWindow.once('ready-to-show', () => {
-    // mainWindow가 show() 상태일 때만 실행
+    mainWindow.webContents.send('storage', 'loginStatus');
+    mainWindow.webContents.send('navigate', '/pin/check');
     if (mainWindow.isVisible()) {
-      // startServiceLogic()
       console.log(1)
+      abc()
     }
   });
 
@@ -88,25 +156,16 @@ function createWindow() {
   // 팝업이 올라왔을때
   ['show', 'restore'].forEach(
       event => mainWindow.on(event, () => {
-        // startServiceLogic()
         console.log("open")
       }));
 
   // 팝업이 내려갔을때
-
   ['hide', 'minimize'].forEach(
       event => mainWindow.on(event, () => {
-        // stopServiceLogic()
         console.log('close')
         mainWindow.webContents.send('storage', 'loginStatus');
         mainWindow.webContents.send('navigate', '/pin/check');
       }));
-
-  /*
-  * ELECTRON_START_URL을 직접 제공할경우 해당 URL을 로드합니다.
-  * 만일 URL을 따로 지정하지 않을경우 (프로덕션빌드) React 앱이
-  * 빌드되는 build 폴더의 index.html 파일을 로드합니다.
-  * */
 
   const startUrl = process.env.ELECTRON_START_URL || url.format({
     pathname: path.join(__dirname, '/../build/index.html'),
@@ -114,32 +173,25 @@ function createWindow() {
     slashes: true
   });
 
-  // 브라우저 페이지 열기
   mainWindow.loadURL(startUrl);
 
-  // 브라우저 닫기
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
+
 }
 
 function startServiceLogic() {
-  // 여기에 실행하려는 서비스 로직을 구현
   console.log('Starting service logic when mainWindow is shown...');
-  // 예: 주기적으로 데이터를 가져오는 타이머 설정
   intervalId = setInterval(async () => {
     console.log('Fetching data...');
-
   }, 5000);
 }
 
 function stopServiceLogic() {
-  // 여기에 서비스 로직을 중지하는 로직을 구현
   console.log('Stopping service logic when mainWindow is hidden...');
-  // 타이머 정지
   if (intervalId) {
-    console.log('dd')
     clearInterval(intervalId);
     intervalId = null;
   }
@@ -147,69 +199,69 @@ function stopServiceLogic() {
 
 // 트레이 생성
 function createTray() {
-  tray = new Tray(__dirname + '/meer.png');
+  tray = new Tray(path.join(__dirname, '/meer.png'));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: '미어캐치 열기', click: () => {
         mainWindow.webContents.send('navigate', '/pin/check');
-        toggleWindow()
+        toggleWindow();
       }
     },
     {
       label: '환결성정', click: () => {
         mainWindow.webContents.send('navigate', '/pin/check');
-        toggleWindow()
+        toggleWindow();
       }
     },
     {
       label: '계정정보', click: () => {
         mainWindow.webContents.send('navigate', '/pin/check');
-        toggleWindow()
+        toggleWindow();
       }
     },
     {
       label: '종료', click: () => {
-        app.quit()
+        mainWindow.webContents.send('storage', 'loginStatus');
+        app.quit();
       }
-    },
-    // { label: 'Quit', click: () => app.quit() }
+    }
   ]);
 
   tray.setToolTip('MeerCat.ch');
   tray.setContextMenu(contextMenu);
   animateIcon();
-  ['double-click'].forEach(
-      event => tray.on(event, () => {
-        mainWindow.webContents.send('navigate', '/pin/check');
-        toggleWindow()
-      }));
+  tray.on('double-click', () => {
+    mainWindow.webContents.send('navigate', '/pin/check');
+    toggleWindow();
+  });
 }
 
 function animateIcon() {
   setInterval(() => {
     iconIndex = (iconIndex + 1) % icons.length;
     tray.setImage(icons[iconIndex]);
-  }, 500); // 500ms 간격으로 아이콘 변경
+  }, 500);
 }
 
 // 현재 중복된 화면 안생기게 하는 로직
 function toggleWindow() {
   if (mainWindow) {
-    // 창이 이미 열려 있는 경우, 창을 포커스
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
     }
     mainWindow.show();
     mainWindow.focus();
   } else {
-    // 창이 없는 경우, 창을 새로 생성
     createWindow();
   }
 }
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    if (serverProcess) {
+      serverProcess.kill();
+    }
+    app.quit()
   }
 });
 
@@ -219,26 +271,20 @@ app.on('activate', () => {
   }
 });
 
-// 전체 화면 최소화
 function allMiniSize() {
-  // IPC 이벤트 수신: 모든 창 최소화 요청
   BrowserWindow.getAllWindows().forEach(win => {
     win.minimize();
   });
 }
 
-// 전체 화면 취소
 function allQuit() {
-  // IPC 이벤트 수신: 모든 프로그램 종료 요청
   BrowserWindow.getAllWindows().forEach(win => {
     win.close();
   });
 }
 
-// 알림 메시지
 function showNotification() {
   const notification = new Notification({
-    subtitle: "ddd",
     title: 'MeerCat.ch',
     body: '유해 콘텐츠가 탐지 되었습니다.',
     icon: path.join(__dirname, '/meer.png')
@@ -248,10 +294,25 @@ function showNotification() {
 }
 
 app.on('ready', () => {
-  app.setAppUserModelId("MeerCat.ch")
+  app.setAppUserModelId("MeerCat.ch");
   createWindow();
   createTray();
 });
 
-// setTimeout(showNotification, 3000)
-// setTimeout(allMiniSize , 6000)
+// 시스템 종료 또는 재시작 시 이벤트 처리
+app.on('before-quit', (event) => {
+  mainWindow.webContents.send('storage', 'loginStatus');
+  console.log('App is about to quit');
+  // 필요한 정리 작업을 수행합니다.
+});
+
+// 시스템 재시작 시 실행할 작업 정의
+app.on('will-restart', () => {
+  // 시스템 재시작 시 수행할 작업을 여기에 작성
+  mainWindow.webContents.send('storage', 'loginStatus');
+  console.log('애플리케이션이 재시작됩니다...');
+  // 필요한 작업을 수행할 수 있습니다.
+  if (serverProcess) {
+    serverProcess.kill();
+  }
+});

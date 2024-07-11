@@ -30,18 +30,27 @@ export default function New() {
   };
 
   const fetchDataServer = () => {
-    // 검색 입력값 직접 가져오기
-    const searchInput = document.getElementById('search').value;
 
-    // axios 요청에 직접 검색어 적용
-    axios
-    .get(`http://localhost:5000/api/items?search=${searchInput}`)
-    .then(response => {
-      setItems(response.data); // 데이터 설정
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
+    window.electron.fetchDataFromDB().then((result) => {
+      console.log("ㅋㅋ")
+      console.log(result)
+      setItems(result);
+    }).catch((error) => {
+      console.error('Error fetching data from database:', error);
     });
+
+    // 검색 입력값 직접 가져오기
+    // const searchInput = document.getElementById('search').value;
+    //
+    // // axios 요청에 직접 검색어 적용
+    // axios
+    // .get(`http://localhost:5000/api/items?search=${searchInput}`)
+    // .then(response => {
+    //   setItems(response.data); // 데이터 설정
+    // })
+    // .catch(error => {
+    //   console.error('Error fetching data:', error);
+    // });
   };
 
   return (

@@ -6,8 +6,31 @@ import {
   SelectTrigger,
   SelectValue
 } from "../components/ui/select";
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 export default function Setting() {
+
+  const [autoLaunch, setAutoLaunch] = useState(() => {
+    const saved = localStorage.getItem("autoLaunch");
+    return saved === "true" || saved === null; // default to true if not set
+  });
+
+  useEffect(() => {
+    if (autoLaunch === null) {
+      console.log("정착")
+      localStorage.setItem("autoLaunch", "true");
+      setAutoLaunch(true);
+    }
+  }, []);
+
+  const toggleAutoLaunch = (value) => {
+    const booleanValue = value === "true"; // ensure correct type
+    setAutoLaunch(booleanValue);
+    localStorage.setItem("autoLaunch", value);
+    window.electron.send('update-auto-launch', booleanValue); // ensure correct type
+  };
+
   return (
       <>
         <Tabs defaultValue="policy" className="w-[740px]">
@@ -74,13 +97,13 @@ export default function Setting() {
                   있습니다.
                 </div>
                 <div className="w-[240px] h-[34px]">
-                  <Select>
+                  <Select onValueChange={toggleAutoLaunch}>
                     <SelectTrigger className="col-span-5">
-                      <SelectValue placeholder="윈도우 시작 시 자동 실행"/>
+                      <SelectValue placeholder={autoLaunch ? "윈도우 시작 시 자동 실행" : "윈도우 시작 시 자동 중지"} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Y">윈도우 시작 시 자동 실행</SelectItem>
-                      <SelectItem value="N">윈도우 시작 시 자동 중지</SelectItem>
+                      <SelectItem value="true" >윈도우 시작 시 자동 실행</SelectItem>
+                      <SelectItem value="false">윈도우 시작 시 자동 중지</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -137,7 +160,8 @@ export default function Setting() {
                 <div className="text-[13px] text-[#515151] font-bold">로그파일 관리
                   관리
                 </div>
-                <div className="text-[12px] text-[#6D6D6D]">아래 기간 동안 로그 파일이 보관 됩니다. (설정 기간이 지나면 오래된 항목 부터 자동으로 삭제 됩니다)
+                <div className="text-[12px] text-[#6D6D6D]">아래 기간 동안 로그 파일이 보관
+                  됩니다. (설정 기간이 지나면 오래된 항목 부터 자동으로 삭제 됩니다)
                 </div>
                 <div className="flex flex-row gap-2 ">
                   <div className="w-[240px] h-[34px]">
@@ -160,14 +184,26 @@ export default function Setting() {
           </TabsContent>
           <TabsContent value="product">
             <main className="flex flex-col items-center m-28 ml-12">
-              <img alt="" src={require('../images/product.png')} />
-              <div className="flex gap-2 text-[19px] mt-6"><p className="text-[#9D1F32] text-[19px] font-bold">MeerCat.ch </p><p className="text-[#515151]">Beta</p></div>
-              <div className="text-[12px] text-[#8B8B8B] mt-1">제품버전 : 1.0.1</div>
-              <div className="text-[12px] text-[#8B8B8B]">엔진버전 : 2024.04.08</div>
+              <img alt="" src={require('../images/product.png')}/>
+              <div className="flex gap-2 text-[19px] mt-6"><p
+                  className="text-[#9D1F32] text-[19px] font-bold">MeerCat.ch </p>
+                <p className="text-[#515151]">Beta</p></div>
+              <div className="text-[12px] text-[#8B8B8B] mt-1">제품버전 : 1.0.1
+              </div>
+              <div className="text-[12px] text-[#8B8B8B]">엔진버전 : 2024.04.08
+              </div>
               <div className="flex flex-row gap-2 mt-10">
-                <Button className="w-[150px] h-[34px]  hover:bg-neutral-400 bg-[#FFFFFF] rounded-sm"><p className="text-[12px] text-[#515151]">사용 약관</p></Button>
-                <Button className="w-[150px] h-[34px]  hover:bg-neutral-400 bg-[#FFFFFF]"><p className="text-[12px] text-[#515151]">오픈소스 라이선스</p></Button>
-                <Button className="w-[150px] h-[34px]  hover:bg-neutral-400 bg-[#FFFFFF]"><p className="text-[12px] text-[#515151]">개인정보처리방침</p></Button>
+                <Button
+                    className="w-[150px] h-[34px]  hover:bg-neutral-400 bg-[#FFFFFF] rounded-sm">
+                  <p className="text-[12px] text-[#515151]">사용 약관</p></Button>
+                <Button
+                    className="w-[150px] h-[34px]  hover:bg-neutral-400 bg-[#FFFFFF]">
+                  <p className="text-[12px] text-[#515151]">오픈소스 라이선스</p>
+                </Button>
+                <Button
+                    className="w-[150px] h-[34px]  hover:bg-neutral-400 bg-[#FFFFFF]">
+                  <p className="text-[12px] text-[#515151]">개인정보처리방침</p>
+                </Button>
               </div>
             </main>
           </TabsContent>
