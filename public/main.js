@@ -14,45 +14,30 @@ let tray;
 let intervalId;
 const Store = require('electron-store');
 let iconIndex = 0;
-
 const icons = [
   path.join(__dirname, '/meer_1.png'),
   path.join(__dirname, '/meer.png'),
 ];
-const {exec} = require('child_process');
-const sqlite3 = require('sqlite3').verbose();
+// const { Database } = require('better-sqlite3');
+const { exec } = require('child_process');
+const personDB = require("./Database/PersonManager")
+
 let db;
-
-
-function abc() {
-
   console.log("ready")
 
   // SQLite 데이터베이스 파일 경로
-  const dbPath = path.join(__dirname, '../meercatch.db');
+  // const dbPath = path.join(__dirname, '../meercatch.db');
 
   // SQLite 데이터베이스 연결
-   db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
-    if (err) {
-      console.error('Error opening database:', err.message);
-    } else {
-      console.log('Connected to the SQLite database.');
-    }
-  });
-
-
-}
+  //   exec('npm run start-server')
+  //   db = new Database(dbPath, { verbose: console.log });
+  // db.pragma("journal_mode = WAL");
+  // console.log("ok")
 
 // IPC to fetch data from the database
 ipcMain.handle('fetch-data-from-db', async (event) => {
   return new Promise((resolve, reject) => {
-    db.all('SELECT * FROM T_HISTORY', (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
+    resolve(personDB.readAllPerson())
   });
 });
 
@@ -144,7 +129,6 @@ function createWindow() {
     mainWindow.webContents.send('navigate', '/pin/check');
     if (mainWindow.isVisible()) {
       console.log(1)
-      abc()
     }
   });
 

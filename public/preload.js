@@ -1,7 +1,13 @@
 const { contextBridge, ipcRenderer,dialog  } = require('electron');
-
+const personDB = require("./Database/PersonManager")
 
 ipcRenderer.setMaxListeners(30);
+
+
+// contextBridge.exposeInMainWorld("sqlite", {
+//   personDB,
+// })
+
 
 contextBridge.exposeInMainWorld('electron', {
   onNavigate: (callback) => {
@@ -29,6 +35,9 @@ contextBridge.exposeInMainWorld('electron', {
     ipcRenderer.send(channel, data);
   },
   fetchDataFromDB: () => {
+    return ipcRenderer.invoke('fetch-data-from-db');
+  },
+  getPersonDB: () => {
     return ipcRenderer.invoke('fetch-data-from-db');
   },
   dialog: {

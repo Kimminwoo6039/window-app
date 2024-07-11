@@ -11,5 +11,8 @@ module.exports = {
   },
   eslint:{
     ignoreDuringBuilds: true
-  }
+  },
+  externals: {
+    "better-sqlite3": "commonjs better-sqlite3",
+  },
 };
