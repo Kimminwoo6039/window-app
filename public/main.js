@@ -26,20 +26,23 @@ console.log("ready")
 // // SQLite 데이터베이스 파일 경로
 // const dbPath = path.resolve(app.getPath('userData'), '/../../meercatch.db');
 //
-const dbPath = path.resolve(app.getAppPath(), 'meercatch.db')
 
-console.log(dbPath)
-db = new Database('meercatch.db', {verbose: console.log});
-db.pragma("journal_mode = WAL");
+function dbConnection() {
+
+    const dbPath = path.resolve(app.getAppPath(), 'meercatch.db')
+
+    console.log(dbPath)
+    db = new Database('meercatch.db', {verbose: console.log});
+    db.pragma("journal_mode = WAL");
 
 // 테이블 존재 여부 확인
-const tableExists = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='T_HISTORY';`).get();
+    const tableExists = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='T_HISTORY';`).get();
 
-if (tableExists) {
-    console.log('테이블 T_HISTORY가 이미 존재합니다.');
-} else {
-    // 테이블 생성 쿼리 실행
-    db.exec(`
+    if (tableExists) {
+        console.log('테이블 T_HISTORY가 이미 존재합니다.');
+    } else {
+        // 테이블 생성 쿼리 실행
+        db.exec(`
   CREATE TABLE "T_HISTORY" (
     "HISTORY_SEQ" INTEGER NOT NULL,
     "EVENT_TYPE" INTEGER NOT NULL,
@@ -52,8 +55,10 @@ if (tableExists) {
     PRIMARY KEY ("HISTORY_SEQ")
   )
 `);
-    console.log('테이블 T_HISTORY가 생성되었습니다.');
+        console.log('테이블 T_HISTORY가 생성되었습니다.');
+    }
 }
+
 
 // if (!fs.existsSync(dbPath)) {
 //     console.log('데이터 파일이 존재하지 않습니다. 새로 생성합니다.')
@@ -79,6 +84,7 @@ console.log("ok")
 
 // IPC to fetch data from the database
 ipcMain.handle('fetch-data-from-db', async (event) => {
+    dbConnection()
     return new Promise((resolve, reject) => {
         resolve(
             db.prepare('select * from T_HISTORY').all()
@@ -151,7 +157,7 @@ function createWindow() {
         icon: path.join(__dirname, '/meer.png')
     });
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 
     if (!app.requestSingleInstanceLock()) {
         app.quit(); // 두 번째 인스턴스가 실행되려고 하면 애플리케이션 종료
@@ -252,7 +258,6 @@ function createTray() {
             label: '종료', click: () => {
                 mainWindow.webContents.send('storage', 'loginStatus');
                 app.quit();
-                db.close()
             }
         }
     ]);
@@ -289,7 +294,6 @@ function toggleWindow() {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
-        db.close()
     }
 });
 
@@ -332,7 +336,7 @@ app.on('ready', () => {
 app.on('before-quit', (event) => {
     mainWindow.webContents.send('storage', 'loginStatus');
     console.log('App is about to quit');
-    db.close()
+    app.quit()
     // 필요한 정리 작업을 수행합니다.
 });
 
@@ -342,5 +346,5 @@ app.on('will-restart', () => {
     mainWindow.webContents.send('storage', 'loginStatus');
     console.log('애플리케이션이 재시작됩니다...');
     // 필요한 작업을 수행할 수 있습니다.
-    db.close()
+    app.quit()
 });
