@@ -23,6 +23,49 @@ const fs = require('fs');
 let db;
 console.log("ready")
 
+
+
+
+const log = require('electron-log');
+const { autoUpdater } = require('electron-updater');
+
+// 로그 초기화
+log.transports.file.level = 'info';
+autoUpdater.logger = log;
+
+
+// 업데이트 관련 이벤트 핸들러
+autoUpdater.on('update-available', (info) => {
+    log.info('Update available.');
+    dialog.showMessageBox({
+        type: 'info',
+        title: 'Update available',
+        message: 'A new version is available. Do you want to update now?',
+        buttons: ['Update', 'Later'],
+    }).then(result => {
+        if (result.response === 0) { // 'Update' 클릭 시
+            autoUpdater.downloadUpdate();
+        }
+    });
+
+});
+
+
+autoUpdater.on('update-downloaded', (info) => {
+    log.info('Update downloaded');
+    dialog.showMessageBox({
+        type: 'info',
+        title: 'Update ready',
+        message: 'Install and restart now?',
+        buttons: ['Yes', 'Later'],
+    }).then(result => {
+        if (result.response === 0) { // 'Yes' 클릭 시
+            autoUpdater.quitAndInstall();
+        }
+    });
+});
+
+
 // // SQLite 데이터베이스 파일 경로
 // const dbPath = path.resolve(app.getPath('userData'), '/../../meercatch.db');
 //
@@ -330,6 +373,7 @@ app.on('ready', () => {
     app.setAppUserModelId("MeerCat.ch");
     createWindow();
     createTray();
+    autoUpdater.checkForUpdatesAndNotify();
 });
 
 // 시스템 종료 또는 재시작 시 이벤트 처리

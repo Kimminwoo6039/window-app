@@ -51,6 +51,7 @@
     "clsx": "^2.1.1",
     "concurrently": "^8.2.2",
     "cors": "^2.8.5",
+    "dist": "^0.1.2",
     "electron-dialog": "^2.0.0",
     "electron-log": "^5.1.5",
     "electron-store": "^8.2.0",
@@ -81,7 +82,8 @@
     "start-server": "npm rebuild better-sqlite3 && node ./server.js",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "postinstall": "electron-builder install-app-deps",
-    "start-electron-app": "concurrently -k \"cross-env BROWSER=none npm run start\" \" electron .\""
+    "start-electron-app": "concurrently -k \"cross-env BROWSER=none npm run start\" \" electron .\"",
+    "dist": "electron-builder"
   },
   "eslintConfig": {
     "extends": [
