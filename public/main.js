@@ -18,26 +18,31 @@ const icons = [
   path.join(__dirname, '/meer_1.png'),
   path.join(__dirname, '/meer.png'),
 ];
-// const { Database } = require('better-sqlite3');
-const { exec } = require('child_process');
-const personDB = require("./Database/PersonManager")
+const Database  = require('better-sqlite3');
+const asar = require('asar');
 
 let db;
   console.log("ready")
-
-  // SQLite 데이터베이스 파일 경로
-  // const dbPath = path.join(__dirname, '../meercatch.db');
-
-  // SQLite 데이터베이스 연결
-  //   exec('npm run start-server')
-  //   db = new Database(dbPath, { verbose: console.log });
-  // db.pragma("journal_mode = WAL");
-  // console.log("ok")
+const buildPath = path.join(app.getAppPath(), 'build');
+const asarPath = path.join(app.getAppPath(), 'resources', 'app.asar');
+console.log('1',path.join(__dirname, 'build'))
+console.log('2',asarPath)
+asar.createPackageWithOptions(buildPath, asarPath, {});
+  // // SQLite 데이터베이스 파일 경로
+  // const dbPath = path.resolve(app.getPath('userData'), '/../../meercatch.db');
+  //
+const dbPath = path.resolve(app.getAppPath(), 'meercatch.db') ?? 'meercatch.db'
+console.log(dbPath)
+    db = new Database('meercatch.db', { verbose: console.log });
+  db.pragma("journal_mode = WAL");
+  console.log("ok")
 
 // IPC to fetch data from the database
 ipcMain.handle('fetch-data-from-db', async (event) => {
   return new Promise((resolve, reject) => {
-    resolve(personDB.readAllPerson())
+    resolve(
+       db.prepare('select * from T_HISTORY').all()
+    )
   });
 });
 
@@ -108,6 +113,7 @@ function createWindow() {
     icon: path.join(__dirname, '/meer.png')
   });
 
+  mainWindow.webContents.openDevTools()
 
   if (!app.requestSingleInstanceLock()) {
     app.quit(); // 두 번째 인스턴스가 실행되려고 하면 애플리케이션 종료
@@ -276,6 +282,7 @@ function showNotification() {
 
   notification.show();
 }
+
 
 app.on('ready', () => {
   app.setAppUserModelId("MeerCat.ch");

@@ -1,5 +1,4 @@
-const { contextBridge, ipcRenderer,dialog  } = require('electron');
-const personDB = require("./Database/PersonManager")
+const { contextBridge, ipcRenderer  } = require('electron');
 
 ipcRenderer.setMaxListeners(30);
 
@@ -36,14 +35,6 @@ contextBridge.exposeInMainWorld('electron', {
   },
   fetchDataFromDB: () => {
     return ipcRenderer.invoke('fetch-data-from-db');
-  },
-  getPersonDB: () => {
-    return ipcRenderer.invoke('fetch-data-from-db');
-  },
-  dialog: {
-    showMessageBox: (options) => dialog.showMessageBoxSync(options),
-    showOpenDialog: (options) => dialog.showOpenDialogSync(options),
-    showSaveDialog: (options) => dialog.showSaveDialogSync(options),
   },
   onRemoveStr: () => {
     ipcRenderer.removeAllListeners('storage')
