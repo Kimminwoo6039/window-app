@@ -42,7 +42,7 @@ export default function SideBar(status: StatusType) {
                   <TooltipContent side="right" sideOffset={8}>
                     실시간 탐지
                   </TooltipContent>
-                  <p className={` ${location.pathname === '/' ?  'text-[#F5F5F5]' : 'text-[#666666]'} text-[14px]`}>실시간 탐지</p>
+                  <p className={` ${location.pathname === '/' ?  'text-[#F5F5F5]' : 'text-[#666666]'} text-[12px]`}>실시간 탐지</p>
                 </Tooltip>
               </Link>
             </TooltipProvider>
@@ -65,7 +65,7 @@ export default function SideBar(status: StatusType) {
                   <TooltipContent side="right" sideOffset={5}>
                     검역소
                   </TooltipContent>
-                  <p className={` ${location.pathname === '/new' ?  'text-[#F5F5F5]' : 'text-[#666666]'} text-[14px]`}>검역소</p>
+                  <p className={` ${location.pathname === '/new' ?  'text-[#F5F5F5]' : 'text-[#666666]'} text-[12px]`}>검역소</p>
                 </Tooltip>
               </Link>
             </TooltipProvider>

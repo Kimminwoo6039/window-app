@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "version": "1.1.7",
+  "version": "1.0.0",
   "private": true,
   "main": "public/main.js",
   "build": {
@@ -10,7 +10,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://github.com/Kimminwoo6039/Eletron-app/releases",
+        "url": "https://github.com/Kimminwoo6039/last-app/releases",
         "channel": "latest",
         "publishAutoUpdate": true
       }
@@ -31,7 +31,7 @@
       "publish": {
         "provider": "github",
         "owner": "Kimminwoo6039",
-        "repo": "Eletron-app",
+        "repo": "last-app",
         "releaseType": "release"
       }
     }

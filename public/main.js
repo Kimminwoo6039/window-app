@@ -37,8 +37,9 @@ autoUpdater.logger = log;
 autoUpdater.setFeedURL({
     provider : 'github',
     owner : 'Kimminwoo6039',
-    repo : 'Eletron-app',
+    repo : 'last-app',
     token: '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',
+    private: true,
     //  private: false, // 공개 저장소인 경우 false로 설정
 })
 
@@ -122,7 +123,7 @@ function dbConnection() {
 
     const dbPath = path.resolve(app.getAppPath(), 'meercatch.db')
 
-    console.log(dbPath)
+    log.info('dbpath=',dbPath)
     db = new Database('meercatch.db', {verbose: console.log});
     db.pragma("journal_mode = WAL");
 
@@ -130,6 +131,7 @@ function dbConnection() {
     const tableExists = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='T_HISTORY';`).get();
 
     if (tableExists) {
+        log.info('테이블 T_HISTORY가 이미 존재합니다.')
         console.log('테이블 T_HISTORY가 이미 존재합니다.');
     } else {
         // 테이블 생성 쿼리 실행
@@ -146,7 +148,18 @@ function dbConnection() {
     PRIMARY KEY ("HISTORY_SEQ")
   )
 `);
+
+        try {
+        db.exec(`
+        INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(0, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL)
+        `);
+        } catch (e) {
+            log.info(e.message)
+        }
+
+
         console.log('테이블 T_HISTORY가 생성되었습니다.');
+        log.info('테이블 T_HISTORY가 생성되었습니다.')
     }
 }
 
