@@ -1,17 +1,18 @@
 {
   "name": "my-app",
-  "version": "0.1.0",
+  "version": "1.1.7",
   "private": true,
   "main": "public/main.js",
   "build": {
     "appId": "com.example.myapp",
-    "productName": "미어캐치",
+    "productName": "미어캐츠",
     "icon": "public/meer.ico",
     "publish": [
       {
-        "provider": "github",
-        "owner": "Kimminwoo6039",
-        "repo": "Eletron-app"
+        "provider": "generic",
+        "url": "https://github.com/Kimminwoo6039/Eletron-app/releases",
+        "channel": "latest",
+        "publishAutoUpdate": true
       }
     ],
     "files": [
@@ -22,7 +23,22 @@
       "dist/**/*",
       "build/**/*",
       "node_modules/**/*"
-    ]
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "publish": {
+        "provider": "github",
+        "owner": "Kimminwoo6039",
+        "repo": "Eletron-app",
+        "releaseType": "release"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kimminwoo6039/Eletron-app"
   },
   "homepage": "./",
   "dependencies": {
@@ -54,11 +70,13 @@
     "dist": "^0.1.2",
     "electron-dialog": "^2.0.0",
     "electron-log": "^5.1.5",
+    "electron-progressbar": "^2.2.1",
     "electron-store": "^8.2.0",
     "electron-updater": "^6.2.1",
     "express": "^4.19.2",
     "lucide-react": "^0.396.0",
     "net": "^1.0.2",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.0",
@@ -77,8 +95,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "el-start": "electron .",
-    "electron-start": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
-    "electron-pack": "npm run build && electron-builder build -c.extraMetadata.main=build/main.js && npm run rebuild",
+    "electron-start": "set ELECTRON_START_URL=http://localhost:3000 && electron . && set GH_TOKEN={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}",
+    "electron-pack": "npm run build && electron-builder build --win --publish always -c.extraMetadata.main=build/main.js && npm run rebuild",
     "start-server": "npm rebuild better-sqlite3 && node ./server.js",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "postinstall": "electron-builder install-app-deps",

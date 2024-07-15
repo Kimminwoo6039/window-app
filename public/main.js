@@ -24,51 +24,99 @@ let db;
 console.log("ready")
 
 
-
-
 const log = require('electron-log');
-const { autoUpdater } = require('electron-updater');
+const {autoUpdater} = require('electron-updater')
 
+
+autoUpdater.autoDownload=false
 // 로그 초기화
 log.transports.file.level = 'info';
 autoUpdater.logger = log;
 
 
-// 업데이트 관련 이벤트 핸들러
+autoUpdater.setFeedURL({
+    provider : 'github',
+    owner : 'Kimminwoo6039',
+    repo : 'Eletron-app',
+    token: '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',
+    //  private: false, // 공개 저장소인 경우 false로 설정
+})
+
+// 개발 환경에서도 업데이트를 확인하도록 설정
+autoUpdater.autoDownload = false;
+autoUpdater.allowPrerelease = true;
+autoUpdater.forceDevUpdateConfig = true;
+
+const ProgressBar = require('electron-progressbar');
+
+
+function downloadBar() {
+    progressBar = new ProgressBar({
+        text: '다운로드중...',
+        detail: '다운로드중...',
+    });
+
+    progressBar
+        .on('completed', function () {
+            console.info(`completed...`);
+            progressBar.detail = 'Task completed. Exiting...';
+        })
+        .on('aborted', function () {
+            console.info(`aborted...`);
+        });
+}
+
+/* Updater ======================================================*/
+
+autoUpdater.on('checking-for-update', () => {
+    log.info('업데이트 확인 중...');
+});
 autoUpdater.on('update-available', (info) => {
     log.info('Update available.');
     dialog.showMessageBox({
-        type: 'info',
-        title: 'Update available',
-        message: 'A new version is available. Do you want to update now?',
-        buttons: ['Update', 'Later'],
+        type: 'question',
+        title: '업데이트',
+        message: '새로운 버전이 출시되었습니다. 업데이트 하시겠습니까?',
+        buttons: ['네', '아니오'],
     }).then(result => {
         if (result.response === 0) { // 'Update' 클릭 시
-            autoUpdater.downloadUpdate();
+            autoUpdater.downloadUpdate().then(
+                downloadBar()
+            )
         }
     });
 
 });
-
-
-autoUpdater.on('update-downloaded', (info) => {
-    log.info('Update downloaded');
-    dialog.showMessageBox({
-        type: 'info',
-        title: 'Update ready',
-        message: 'Install and restart now?',
-        buttons: ['Yes', 'Later'],
-    }).then(result => {
-        if (result.response === 0) { // 'Yes' 클릭 시
-            autoUpdater.quitAndInstall();
-        }
-    });
+autoUpdater.on('update-not-available', (info) => {
+    log.info('현재 최신버전입니다.');
+});
+autoUpdater.on('error', (err) => {
+    log.info('에러가 발생하였습니다. 에러내용 : ' + err);
 });
 
 
-// // SQLite 데이터베이스 파일 경로
-// const dbPath = path.resolve(app.getPath('userData'), '/../../meercatch.db');
-//
+// 업데이트 다운로드가 끝난 경우
+autoUpdater.on("update-downloaded", (info) => {
+    progressBar.setCompleted()
+
+    const options = {
+        type: "question",
+        buttons: ["업데이트", "취소"],
+        title: "클라이언트 업데이터",
+        message: "업데이트가 있습니다. 프로그램을 업데이트 하시겠습니까?",
+    };
+
+    let btnIndex = dialog.showMessageBoxSync(mainWindow, options);
+    if (btnIndex === 0) {
+        log.info("update install start and quit");
+        autoUpdater.quitAndInstall();
+    } else {
+        log.info("no update. exit ");
+        app.quit();
+    }
+});
+
+/* Electron =====================================================*/
 
 function dbConnection() {
 
@@ -103,28 +151,6 @@ function dbConnection() {
 }
 
 
-// if (!fs.existsSync(dbPath)) {
-//     console.log('데이터 파일이 존재하지 않습니다. 새로 생성합니다.')
-//
-//     db.exec(`
-//   CREATE TABLE "T_HISTORY" (
-//     "HISTORY_SEQ" INTEGER NOT NULL,
-//     "EVENT_TYPE" INTEGER NOT NULL,
-//     "EVENT_IMAGE" UNKNOWN NOT NULL,
-//     "EVENT_CODE" VARCHAR(2048) NULL,
-//     "EVENT_OBJ" VARCHAR(2048) NULL,
-//     "EVENT_VERIFY" TINYINT NOT NULL,
-//     "REG_DATE" DATETIME NULL,
-//     "EVENT_SCORE" VARCHAR(2048) NULL,
-//     PRIMARY KEY ("HISTORY_SEQ")
-//   )
-// `);
-//
-//     console.log('SQLITE 초기화 완료')
-// }
-
-console.log("ok")
-
 // IPC to fetch data from the database
 ipcMain.handle('fetch-data-from-db', async (event) => {
     dbConnection()
@@ -135,16 +161,6 @@ ipcMain.handle('fetch-data-from-db', async (event) => {
     });
 });
 
-// 데이터베이스 파일 경로 설정
-
-// SQLite3 데이터베이스 연결
-// db = new Database('meercatch.db');
-// db.pragma("journal_mode = WAL");
-
-// IPC를 통해 React로 데이터 전송하기
-// ipcMain.handle('fetch-data-from-db', (event) => {
-//   return db.prepare('SELECT * FROM T_HISTORY').all();
-// });
 
 const store = new Store({
     defaults: {
@@ -369,26 +385,13 @@ function showNotification() {
 }
 
 
-app.on('ready', () => {
+app.on('ready', async () => {
     app.setAppUserModelId("MeerCat.ch");
     createWindow();
     createTray();
-    autoUpdater.checkForUpdatesAndNotify();
-});
-
-// 시스템 종료 또는 재시작 시 이벤트 처리
-app.on('before-quit', (event) => {
-    mainWindow.webContents.send('storage', 'loginStatus');
-    console.log('App is about to quit');
-    app.quit()
-    // 필요한 정리 작업을 수행합니다.
-});
-
-// 시스템 재시작 시 실행할 작업 정의
-app.on('will-restart', () => {
-    // 시스템 재시작 시 수행할 작업을 여기에 작성
-    mainWindow.webContents.send('storage', 'loginStatus');
-    console.log('애플리케이션이 재시작됩니다...');
-    // 필요한 작업을 수행할 수 있습니다.
-    app.quit()
+    try {
+        await autoUpdater.checkForUpdatesAndNotify();
+    } catch (e) {
+        console.log('error')
+    }
 });
