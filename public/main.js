@@ -9,31 +9,43 @@ const {
 } = require('electron');
 const path = require('path');
 const url = require('url');
-let mainWindow;
-let tray;
-let intervalId;
 const Store = require('electron-store');
-let iconIndex = 0;
 const icons = [
     path.join(__dirname, '/meer_1.png'),
     path.join(__dirname, '/meer.png'),
 ];
 const Database = require('better-sqlite3');
 const fs = require('fs');
-let db;
-console.log("ready")
-
-
 const log = require('electron-log');
 const {autoUpdater} = require('electron-updater')
+const ProgressBar = require('electron-progressbar');
 
 
-autoUpdater.autoDownload=false
+// 초기화
+let mainWindow;
+let tray;
+let intervalId;
+let iconIndex = 0;
+let db;
+
+
+/**
+ * 자동업데이트
+ */
+
 // 로그 초기화
 log.transports.file.level = 'info';
+// 자동업데이트 로그 설정
 autoUpdater.logger = log;
+// 자동업데이트 자동다운로드 false
+autoUpdater.autoDownload=false
 
+// 개발 환경에서도 업데이트를 확인하도록 설정
+autoUpdater.autoDownload = false;
+autoUpdater.allowPrerelease = true;
+autoUpdater.forceDevUpdateConfig = true;
 
+// 자동업데이트 연결할 repository
 autoUpdater.setFeedURL({
     provider : 'github',
     owner : 'Kimminwoo6039',
@@ -43,14 +55,8 @@ autoUpdater.setFeedURL({
     //  private: false, // 공개 저장소인 경우 false로 설정
 })
 
-// 개발 환경에서도 업데이트를 확인하도록 설정
-autoUpdater.autoDownload = false;
-autoUpdater.allowPrerelease = true;
-autoUpdater.forceDevUpdateConfig = true;
 
-const ProgressBar = require('electron-progressbar');
-
-
+// 다운로드 UI 표시
 function downloadBar() {
     progressBar = new ProgressBar({
         text: '다운로드중...',
@@ -67,11 +73,12 @@ function downloadBar() {
         });
 }
 
-/* Updater ======================================================*/
-
+// 최선 업데이트 있는지 확인.
 autoUpdater.on('checking-for-update', () => {
     log.info('업데이트 확인 중...');
 });
+
+// 업데이트 할게 있을시
 autoUpdater.on('update-available', (info) => {
     log.info('Update available.');
     dialog.showMessageBox({
@@ -88,9 +95,13 @@ autoUpdater.on('update-available', (info) => {
     });
 
 });
+
+// 업데이트 최신
 autoUpdater.on('update-not-available', (info) => {
     log.info('현재 최신버전입니다.');
 });
+
+// 업데이트 에러
 autoUpdater.on('error', (err) => {
     log.info('에러가 발생하였습니다. 에러내용 : ' + err);
 });
@@ -117,13 +128,16 @@ autoUpdater.on("update-downloaded", (info) => {
     }
 });
 
-/* Electron =====================================================*/
+
+/**
+ * better-sqlite3 DB 연결 설정
+ */
 
 function dbConnection() {
 
     const dbPath = path.resolve(app.getAppPath(), 'meercatch.db')
 
-    log.info('dbpath=',dbPath)
+    log.info('DataBase 경로=',dbPath)
     db = new Database('meercatch.db', {verbose: console.log});
     db.pragma("journal_mode = WAL");
 
@@ -132,7 +146,6 @@ function dbConnection() {
 
     if (tableExists) {
         log.info('테이블 T_HISTORY가 이미 존재합니다.')
-        console.log('테이블 T_HISTORY가 이미 존재합니다.');
     } else {
         // 테이블 생성 쿼리 실행
         db.exec(`
@@ -158,7 +171,6 @@ function dbConnection() {
         }
 
 
-        console.log('테이블 T_HISTORY가 생성되었습니다.');
         log.info('테이블 T_HISTORY가 생성되었습니다.')
     }
 }
@@ -175,6 +187,9 @@ ipcMain.handle('fetch-data-from-db', async (event) => {
 });
 
 
+/**
+ * 리액트상 자동업데이트 사용 유/무
+ */
 const store = new Store({
     defaults: {
         autoLaunch: true, // default to true
@@ -195,6 +210,10 @@ ipcMain.on('update-auto-launch', (event, value) => {
     onUpdateAutoLaunch(value);
 });
 
+
+/**
+ * 타이틀바 이벤트
+ */
 // 타이틀바 이벤트 처리
 ipcMain.on('minimize', () => {
     mainWindow.minimize();
@@ -212,6 +231,10 @@ ipcMain.on('close', () => {
     mainWindow.hide();
 });
 
+
+/**
+ * window 생성창
+ */
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -255,7 +278,7 @@ function createWindow() {
         }
     });
 
-    // Prevent maximize on double-clicking the title bar
+    // 최대화 못하게 막기
     mainWindow.on('maximize', () => {
         mainWindow.unmaximize();
     });
@@ -289,22 +312,10 @@ function createWindow() {
 
 }
 
-function startServiceLogic() {
-    console.log('Starting service logic when mainWindow is shown...');
-    intervalId = setInterval(async () => {
-        console.log('Fetching data...');
-    }, 5000);
-}
+/**
+ * 트레이 생성
+ */
 
-function stopServiceLogic() {
-    console.log('Stopping service logic when mainWindow is hidden...');
-    if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
-    }
-}
-
-// 트레이 생성
 function createTray() {
     tray = new Tray(path.join(__dirname, '/meer.png'));
     const contextMenu = Menu.buildFromTemplate([
@@ -343,6 +354,7 @@ function createTray() {
     });
 }
 
+// 아이콘 깜박거리기
 function animateIcon() {
     setInterval(() => {
         iconIndex = (iconIndex + 1) % icons.length;
@@ -377,29 +389,7 @@ app.on('activate', () => {
     }
 });
 
-function allMiniSize() {
-    BrowserWindow.getAllWindows().forEach(win => {
-        win.minimize();
-    });
-}
-
-function allQuit() {
-    BrowserWindow.getAllWindows().forEach(win => {
-        win.close();
-    });
-}
-
-function showNotification() {
-    const notification = new Notification({
-        title: 'MeerCat.ch',
-        body: '유해 콘텐츠가 탐지 되었습니다.',
-        icon: path.join(__dirname, '/meer.png')
-    });
-
-    notification.show();
-}
-
-
+// 앱이 준비상태가 되었을때
 app.on('ready', async () => {
     app.setAppUserModelId("MeerCat.ch");
     createWindow();
