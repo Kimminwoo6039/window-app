@@ -11,6 +11,7 @@ const NavigationHandler = () => {
   let expiration = localStorage.getItem("expiry");
 
   useEffect(() => {
+
     if (window.electron && window.electron.onLocalStorage) {
       window.electron.onRemoveStr()
       console.log('Setting up navigation handler in React');
@@ -27,7 +28,7 @@ const NavigationHandler = () => {
       console.log('Setting up navigation handler in React');
       window.electron.onNavigate((event, path) => {
         console.log('Navigating to:', path);
-        
+
         // 라이선스 등록 안되있을때 라이선스 등록페이지로 이동
         if (active) {
           navigate(path);

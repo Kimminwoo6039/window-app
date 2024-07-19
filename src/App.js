@@ -12,6 +12,7 @@ import PinCheck from "./pages/pin/PinCheck";
 import PinExpiry from "./pages/pin/PinExpiry";
 import {NetworkStatusProvider} from "./components/NetworkStatus";
 
+
 function App() {
   const [status, setStatus] = useState(true);
   const navigate = useNavigate();
@@ -19,14 +20,21 @@ function App() {
   const [activation, SetActivation] = useState(false);
   const [loginStatus, setLoginStatus] = useState(false);
   const [expiry , setExpiry] = useState(false)
+  const [fcmToken, setFcmToken] = useState("");
 
   useEffect(() => {
+
+    window.electron?.getFCMToken('getFCMToken', (_, token) => {
+      console.log(token)
+      setFcmToken(token);
+    });
+
     let active = localStorage.getItem("activation")
     let loginStatus = localStorage.getItem("loginStatus");
     let expiration = localStorage.getItem("expiry");
 
     setExpiry(true)
-    
+
     if (active) {
       SetActivation(true)
     } else {

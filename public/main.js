@@ -19,6 +19,7 @@ const fs = require('fs');
 const log = require('electron-log');
 const {autoUpdater} = require('electron-updater')
 const ProgressBar = require('electron-progressbar');
+const { setup: setupPushReceiver } = require('electron-push-receiver');
 
 
 // 초기화
@@ -163,7 +164,7 @@ function dbConnection() {
 `);
 
         try {
-        db.exec(`
+            db.exec(`
         INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(0, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL)
         `);
         } catch (e) {
@@ -252,7 +253,7 @@ function createWindow() {
         icon: path.join(__dirname, '/meer.png')
     });
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
     if (!app.requestSingleInstanceLock()) {
         app.quit(); // 두 번째 인스턴스가 실행되려고 하면 애플리케이션 종료
@@ -304,6 +305,9 @@ function createWindow() {
     });
 
     mainWindow.loadURL(startUrl);
+
+    // Setup push receiver
+    setupPushReceiver(mainWindow.webContents);
 
     mainWindow.on('closed', () => {
         mainWindow = null;
@@ -399,4 +403,25 @@ app.on('ready', async () => {
     } catch (e) {
         console.log('error')
     }
+    ipcMain.on("storeFCMToken", (e, token) => {
+        store.set('fcm_token', token);
+    });
+
+    ipcMain.on("getFCMToken", async (e) => {
+        e.sender.send('getFCMToken', store.get('fcm_token'));
+    });
 });
+
+ipcMain.on("pushNotification", (e, result) => {
+    showNotification(result)
+});
+
+function showNotification(result) {
+    const notification = new Notification({
+        title: result.notification.title,
+        body: result.notification.body,
+        icon: path.join(__dirname, '/meer.png'),
+    });
+
+    notification.show();
+}
