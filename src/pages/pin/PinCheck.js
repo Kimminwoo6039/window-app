@@ -1,8 +1,8 @@
 import React, {FormEvent, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import PinReset from "./PinReset";
-import FormInput from "../../components/common/FormInput";
-import FormButton from "../../components/common/FormButton";
+import {Input} from "../../components/ui/input";
+import {Button} from "../../components/ui/button";
 
 /**
  * 핀 확인하는 페이지
@@ -39,7 +39,7 @@ export default function PinCheck() {
                         <img src={require('../../images/logo.png')} alt={''}/>
                     </div>
                 </div>
-                <div className="m-4"></div>
+                <div className="m-2"></div>
                 <div className="text-[30px] w-[500px] h-[35px] flex justify-center">
                     <span className="text-[#9D1F32] text-[30px]">PIN 번호</span>를 입력해 주세요.
                 </div>
@@ -52,7 +52,7 @@ export default function PinCheck() {
                 </div>
                 <div className="m-2"></div>
                 <form onSubmit={onSubmit}>
-                    <FormInput
+                    <Input
                         type="text"
                         placeholder="PIN (4자리 이상 숫자)"
                         value={pin}
@@ -60,12 +60,12 @@ export default function PinCheck() {
                         className="w-[280px] h-[34px] rounded-sm"
                     />
                     <div className="mt-4"></div>
-                    <FormButton
+                    <Button
                         type="submit"
                         className="w-[280px] h-[34px]"
                     >
                         <p className="text-[12px]">확인</p>
-                    </FormButton>
+                    </Button>
                     <div className="m-6"></div>
                     <PinReset/>
                 </form>

@@ -1,7 +1,8 @@
 import React, { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import FormButton from "../../components/common/FormButton";
-import FormInput from "../../components/common/FormInput";
+import {Input} from "../../components/ui/input";
+import {Button} from "../../components/ui/button";
+
 
 /**
  * 라이센스 만료 페이지
@@ -38,16 +39,16 @@ export default function PinExpiry() {
           </p>
         </div>
         <form onSubmit={onSubmit} className="flex flex-col items-center">
-          <FormInput
+          <Input
               type="text"
               placeholder="라이선스 키"
               value={licenseKey}
               onChange={handleLicenseKeyChange}
               className="w-[280px] h-[34px] rounded-sm mb-4"
           />
-          <FormButton className="w-[280px] h-[34px] rounded-sm">
+          <Button className="w-[280px] h-[34px] rounded-sm">
             <p className="text-[12px]">등록</p>
-          </FormButton>
+          </Button>
         </form>
       </div>
   );

@@ -2,7 +2,6 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 import TableComponent from '../../components/table/Table';
-import axios from 'axios';
 import { useNetworkStatus } from '../../components/network/NetworkStatus';
 import { useNavigate } from 'react-router-dom';
 import BlankTable from "../../components/table/BlankTable";

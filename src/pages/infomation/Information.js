@@ -1,5 +1,4 @@
 import React from 'react';
-import {Button} from "../../components/ui/button";
 import LicenceClear from "../licence/LicenceClear";
 import PinClear from "../pin/PinClear";
 

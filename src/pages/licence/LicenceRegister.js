@@ -1,7 +1,8 @@
 import React, {FormEvent, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import FormInput from "../../components/common/FormInput";
-import FormButton from "../../components/common/FormButton";
+import {Input} from "../../components/ui/input";
+import {Button} from "../../components/ui/button";
+
 
 /**
  * 맨처음 설치 페이지
@@ -38,7 +39,7 @@ export default function LicenceRegister() {
                         <img src={require('../../images/logo.png')} alt={''}/>
                     </div>
                 </div>
-                <div className="m-4"></div>
+                <div className="m-2"></div>
                 <div className="flex flex-col justify-center items-center">
                     <div className="text-[30px] w-[337px] h-[35px] flex justify-center">
                         <span className="text-[#9D1F32]">단말기</span>를 활성화 해주세요.
@@ -50,13 +51,13 @@ export default function LicenceRegister() {
                 <div className="m-2"></div>
                 <form onSubmit={onSubmit}>
                     <div>
-                        <FormInput
+                        <Input
                             type="text"
                             placeholder="아이디"
                             className="w-[280px] h-[34px] rounded-sm"
                         />
                         <div className="m-2"></div>
-                        <FormInput
+                        <Input
                             type="text"
                             placeholder="비밀번호"
                             className="w-[280px] h-[34px] rounded-sm"
@@ -64,7 +65,7 @@ export default function LicenceRegister() {
                         <div className="mt-4"></div>
                         <hr/>
                         <div className="mt-4"></div>
-                        <FormInput type="text"
+                        <Input type="text"
                            placeholder="라이선스 키"
                            maxLength="15" value={value}
                            onChange={handleInputChange}
@@ -74,10 +75,10 @@ export default function LicenceRegister() {
                     </div>
                     <div className="m-4"></div>
                     <div>
-                        <FormButton
+                        <Button
                             className="w-[280px] h-[34px]">
                             <p className="text-[12px]">등록</p>
-                        </FormButton>
+                        </Button>
                     </div>
                     <div className="m-1"></div>
                     <p className="text-[10px] text-[#BABABA]">예 ) AKJDK-21-ZSDF1L</p>

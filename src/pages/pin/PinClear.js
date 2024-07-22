@@ -9,8 +9,9 @@ import {
   DialogTrigger
 } from "../../components/ui/dialog";
 import { Label } from "../../components/ui/label";
-import FormButton from "../../components/common/FormButton";
-import FormInput from "../../components/common/FormInput";
+import {Input} from "../../components/ui/input";
+import {Button} from "../../components/ui/button";
+
 
 
 /**
@@ -46,9 +47,9 @@ export default function PinClear() {
   return (
       <Dialog>
         <DialogTrigger asChild>
-          <FormButton className="rounded-sm w-[80px] h-[34px] bg-[#FFFFFF] border hover:bg-neutral-300">
+          <Button className="rounded-sm w-[80px] h-[34px] bg-[#FFFFFF] border hover:bg-neutral-300">
             <p className="text-[#515151] text-[12px]">PIN 변경</p>
-          </FormButton>
+          </Button>
         </DialogTrigger>
         <DialogContent className="w-[400px] h-[420px] bg-[#F1F1F1]">
           <form onSubmit={onSubmit}>
@@ -62,7 +63,7 @@ export default function PinClear() {
               <Label htmlFor="currentPin" className="ml-6 mb-1 text-[13px] text-[#404040]">
                 현재 PIN 번호를 입력해주세요.
               </Label>
-              <FormInput
+              <Input
                   type="text"
                   id="currentPin"
                   placeholder="현재 PIN"
@@ -75,7 +76,7 @@ export default function PinClear() {
               <Label htmlFor="newPin" className="ml-2 mb-1 text-[13px]">
                 등록할 PIN 번호를 입력해주세요.
               </Label>
-              <FormInput
+              <Input
                   type="text"
                   id="newPin"
                   placeholder="새로운 PIN (숫자 4자리 이상)"
@@ -83,7 +84,7 @@ export default function PinClear() {
                   value={newPin}
                   onChange={handleNewPinChange}
               />
-              <FormInput
+              <Input
                   type="text"
                   id="confirmPin"
                   placeholder="새로운 PIN 확인"
@@ -94,12 +95,12 @@ export default function PinClear() {
             </div>
             <div className="flex flex-row justify-center">
               <DialogFooter>
-                <FormButton
+                <Button
                     type="submit"
                     className="w-[339px] h-[34px]"
                 >
                   <p className="text-[12px]">PIN 초기화</p>
-                </FormButton>
+                </Button>
                 <DialogClose id="modalClose" />
               </DialogFooter>
             </div>
