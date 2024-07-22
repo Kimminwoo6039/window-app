@@ -1,43 +1,43 @@
+/* Import Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
+/* Custom font-face */
 @font-face {
   font-family: "NanumGothic-Regular";
   font-weight: normal;
   src: url("./font/NanumGothic-Regular.ttf") format("truetype");
 }
 
+/* Ant Design Table Styling */
 .ant-table-cell {
-  padding: 0px !important; /* 패딩을 제거합니다 */
+  padding: 0px !important;
   height: 41px;
   justify-content: center;
-}
-
-.ant-table-cell {
   border-right: 1px solid #d9d9d9;
   border-bottom: 1px solid #d9d9d9;
   align-items: center;
-
 }
 
-.ant-table-thead > tr > th {
+.ant-table-thead > tr > th,
+.ant-table-thead > tr > th:last-child,
+.ant-table-tbody > tr:last-child > td,
+.ant-table-tbody > tr > td:last-child {
   border-right: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.ant-table-thead > tr > th:last-child,
+.ant-table-tbody > tr > td:last-child {
+  border-right: none;
 }
 
 .ant-table-tbody > tr:last-child > td {
   border-bottom: none;
 }
 
-.ant-table-tbody > tr > td:last-child {
-  border-right: none;
-}
-
-.ant-table-thead > tr > th:last-child {
-  border-right: none;
-}
-
+/* Preview container styling */
 .preview-container {
   position: fixed;
   top: 30px;
@@ -50,81 +50,47 @@
 }
 
 .preview-image {
-  /*max-width: 400px;*/
-  /*max-height: 400px;*/
   width: 250px;
   height: 200px;
-
 }
 
-
-/* Checkbox hover and focus state */
+/* Ant Design Checkbox Styling */
 .ant-checkbox:hover .ant-checkbox-inner,
-.ant-checkbox-input:focus + .ant-checkbox-inner {
-  border-color: #9D1F32 !important; /* Change this to your desired hover border color */
-}
-
-.ant-checkbox-indeterminate {
-  border-color: #9D1F32 !important;
-}
-
-/* Assuming Ant Design Checkbox component is used */
-.ant-checkbox-wrapper {
-  border-color: #9D1F32 !important;
-  /* Modify checkbox label appearance */
-}
-
-/* Checkbox background color when checked */
-.ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #9D1F32 !important; /* Default background color when checked */
-  border-color: #9D1F32 !important; /* Default border color when checked */
-}
-
-/* Checkbox hover state */
+.ant-checkbox-input:focus + .ant-checkbox-inner,
+.ant-checkbox-wrapper,
+.ant-checkbox-indeterminate,
+.ant-checkbox-checked .ant-checkbox-inner,
 .ant-checkbox:hover .ant-checkbox-inner,
-.ant-checkbox-input:focus + .ant-checkbox-inner {
-  border-color: #9D1F32 !important; /* Border color on hover */
-}
-
-.ant-table-selection + .ant-checkbox-input:checked {
-  background-color: #9D1F32 !important; /* Border color on hover */
-}
-
-.ant-checkbox-input .ant-checkbox-inner {
-  border-color: #9D1F32 !important; /* Border color on hover */
-}
-
-/* Checkbox checked hover state */
-.ant-checkbox-checked:hover .ant-checkbox-inner {
-  background-color: #9D1F32 !important; /* Background color on hover when checked */
-  border-color: #9D1F32 !important; /* Border color on hover when checked */
-}
-
-/* Checkbox outline color */
+.ant-checkbox-input:focus + .ant-checkbox-inner,
+.ant-table-selection + .ant-checkbox-input:checked,
+.ant-checkbox-input .ant-checkbox-inner,
+.ant-checkbox-checked:hover .ant-checkbox-inner,
 .ant-checkbox-wrapper:hover .ant-checkbox-inner,
 .ant-checkbox:hover .ant-checkbox-inner,
-.ant-checkbox-input:focus + .ant-checkbox-inner {
-  border-color: #9D1F32 !important; /* Border color on hover */
-}
-
-/* Checkbox checked background color */
+.ant-checkbox-input:focus + .ant-checkbox-inner,
 .ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #9D1F32 !important; /* Background color when checked */
-  border-color: #9D1F32 !important; /* Border color when checked */
+  border-color: #9D1F32 !important;
 }
 
+.ant-checkbox-checked .ant-checkbox-inner,
+.ant-checkbox-checked:hover .ant-checkbox-inner {
+  background-color: #9D1F32 !important;
+}
+
+/* Table cell image transition */
 .ant-table-cell.ant-table-selection-column img {
   transition: transform 0.3s ease, opacity 0.3s ease !important;
-  will-change: transform, opacity !important; /* will-change 속성 추가 */
+  will-change: transform, opacity !important;
 }
 
-
+/* Table selected row styling */
 :where(.css-dev-only-do-not-override-f7vrd6).ant-table-wrapper .ant-table-tbody .ant-table-row.ant-table-row-selected > .ant-table-cell {
   background: none;
 }
 
+/* Global styles */
 html, body {
-  resize: none; /* 화면 크기 조정 비활성화 */
+  resize: none; /* Disable window resizing */
 }
 
 body {
@@ -137,6 +103,7 @@ body * {
   box-sizing: border-box;
 }
 
+/* Result container */
 .result {
   height: 100%;
   display: grid;
@@ -144,6 +111,7 @@ body * {
   padding: 0;
 }
 
+/* Title styling */
 .title {
   height: auto;
   margin-left: 10px;
@@ -152,6 +120,7 @@ body * {
   color: red;
 }
 
+/* Control button styling */
 .control {
   float: right;
   display: grid;
@@ -167,14 +136,15 @@ body * {
   border: 0;
 }
 
+.control button:hover {
+  background: #444444;
+}
+
 .fa {
   color: black;
 }
 
-.control button:hover {
-  background: #444444
-}
-
+/* Title bar styling */
 .title-bar {
   background: #25292E;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -183,16 +153,19 @@ body * {
   -webkit-app-region: drag;
 }
 
+/* Prevent text selection */
 .prevent-select {
   user-select: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
 }
 
+/* Draggable element styling */
 .draggable {
   -webkit-app-region: drag;
 }
 
+/* Button styling */
 #minimizeBtn {
   -webkit-app-region: no-drag;
   margin-bottom: 10px;
@@ -219,56 +192,53 @@ body * {
   height: 35px;
 }
 
-
+/* Tailwind customizations */
 @layer base {
   :root {
-    --background: 0 0% 100%; /* White */
-    --foreground: 0 0% 3.9%; /* Very dark gray */
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 0 0% 3.9%; /* Very dark gray */
-    --popover: 0 0% 100%; /* White */
-    --popover-foreground: 0 0% 3.9%; /* Very dark gray */
-    --primary: 350.9 66.9% 36.9%; /* #9D1F32 in HSL: hsl(348, 66%, 37%) */
-    --primary-foreground: 0 85.6% 97.3%; /* Very light pink */
-    --secondary: 0 0% 96.1%; /* Very light gray */
-    --secondary-foreground: 0 0% 9%; /* Dark gray */
-    --muted: 0 0% 96.1%; /* Very light gray */
-    --muted-foreground: 0 0% 45.1%; /* Medium gray */
-    --accent: 0 0% 96.1%; /* Very light gray */
-    --accent-foreground: 0 0% 9%; /* Dark gray */
-    --destructive: 0 84.2% 60.2%; /* Bright red */
-    --destructive-foreground: 0 0% 98%; /* Very light gray */
-    --border: 0 0% 89.8%; /* Light gray */
-    --input: 0 0% 89.8%; /* Light gray */
-    --ring: 350 67% 38%; /* #9D1F32 in HSL: hsl(348, 66%, 37%) */
-    --radius: 0.5rem; /* Border radius */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 350.9 66.9% 36.9%;
+    --primary-foreground: 0 85.6% 97.3%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 350 67% 38%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 3.9%; /* Very dark gray */
-    --foreground: 0 0% 98%; /* Very light gray */
-    --card: 0 0% 3.9%; /* Very dark gray */
-    --card-foreground: 0 0% 98%; /* Very light gray */
-    --popover: 0 0% 3.9%; /* Very dark gray */
-    --popover-foreground: 0 0% 98%; /* Very light gray */
-    --primary: 348 66% 37%; /* #9D1F32 in HSL: hsl(348, 66%, 37%) */
-    --primary-foreground: 0 85.7% 97.3%; /* Very light pink */
-    --secondary: 0 0% 14.9%; /* Dark gray */
-    --secondary-foreground: 0 0% 98%; /* Very light gray */
-    --muted: 0 0% 14.9%; /* Dark gray */
-    --muted-foreground: 0 0% 63.9%; /* Medium gray */
-    --accent: 0 0% 14.9%; /* Dark gray */
-    --accent-foreground: 0 0% 98%; /* Very light gray */
-    --destructive: 0 62.8% 30.6%; /* Dark red */
-    --destructive-foreground: 0 0% 98%; /* Very light gray */
-    --border: 0 0% 14.9%; /* Dark gray */
-    --input: 0 0% 14.9%; /* Dark gray */
-    --ring: 348 66% 37%; /* #9D1F32 in HSL: hsl(348, 66%, 37%) */
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 348 66% 37%;
+    --primary-foreground: 0 85.7% 97.3%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 348 66% 37%;
   }
-}
 
-
-@layer base {
   * {
     @apply border-border;
   }

@@ -14,14 +14,14 @@ const app = express();
 app.use(bodyParser.json());
 
 app.post('/send', (req, res) => {
-    const { token, title, body } = req.body;
+    const { token, title, body , topic } = req.body;
 
     const message = {
         notification: {
             title: title,
             body: body
         },
-        token: token
+         token: token
     };
 
     admin.messaging().send(message)

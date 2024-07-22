@@ -1,62 +1,56 @@
-import {Button} from "../../components/ui/button";
-import React, {FormEvent} from "react";
-import {Input} from "../../components/ui/input";
-import {useNavigate} from "react-router-dom";
+import React, { useState, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import FormButton from "../../components/common/FormButton";
+import FormInput from "../../components/common/FormInput";
 
 export default function PinRegister() {
-  let navigator = useNavigate()
+  const navigate = useNavigate();
+  const [pin, setPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
+
+  const handlePinChange = (e) => setPin(e.target.value);
+  const handleConfirmPinChange = (e) => setConfirmPin(e.target.value);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    console.log("등록")
-    localStorage.setItem("activation",true)
-    navigator('/pin/check',{replace:false})
-  }
+    e.preventDefault();
+
+    if (pin === confirmPin) {
+      console.log("등록");
+      localStorage.setItem("activation", "true");
+      navigate('/pin/check', { replace: false });
+    } else {
+      console.error("PIN이 일치하지 않습니다.");
+      // You may want to show an error message to the user here
+    }
+  };
 
   return (
-      <>
-        <div className="flex flex-col ">
-          <main
-              className="flex flex-col m-auto justify-center items-center h-screen ">
-            <div className="flex flex-row">
-              <div className="flex flex-col">
-                <img src={require('../../images/logo.png')} alt={''}
-                />
-              </div>
-            </div>
-            <div className="m-4"></div>
-            <div className="flex flex-col justify-center items-center">
-              <div
-                  className="text-[30px] w-[500px] h-[35px] flex justify-center">
-                <span className="text-[#9D1F32] text-[30px]">PIN 번호</span>를 등록해 해주세요.
-              </div>
-              <div className="m-2"></div>
-              <div className="text-[13px] text-neutral-500 w-[271px] ">암호 대신 사용할 PIN 번호를 등록해주세요.
-              </div>
-              <div
-                  className="text-[13px] text-neutral-500 w-[271px] h-[30px]">PIN 번호는 향후 서비스 관리 시 사용됩니다.
-              </div>
-            </div>
-            <div className="m-2"></div>
-            <form onSubmit={onSubmit}>
-              <div>
-                <Input type="text" placeholder="PIN (4자리 이상 숫자)"
-                       className="w-[280px] h-[34px] rounded-sm"/>
-                <div className="m-2"></div>
-                <Input type="text" placeholder="PIN 확인"
-                       className="w-[280px] h-[34px] rounded-sm"/>
-                <div className="mt-4"></div>
-              </div>
-              <div className="m-2"></div>
-              <div>
-                <Button className="w-[280px] h-[34px]"><p
-                    className="text-[12px] ">PIN 설정</p></Button>
-              </div>
-              <div className="m-1"></div>
-              <div className="m-2"></div>
-              <div className="mb-8"></div>
-            </form>
-          </main>
+      <div className="flex flex-col h-screen justify-center items-center">
+        <img src={require('../../images/logo.png')} alt="Logo" className="mb-4" />
+        <div className="text-center mb-4">
+          <h1 className="text-[#9D1F32] text-[30px]">PIN 번호를 등록해 주세요.</h1>
+          <p className="text-[13px] text-neutral-500 mt-2">암호 대신 사용할 PIN 번호를 등록해주세요.</p>
+          <p className="text-[13px] text-neutral-500">PIN 번호는 향후 서비스 관리 시 사용됩니다.</p>
         </div>
-      </>
-  )
+        <form onSubmit={onSubmit} className="flex flex-col items-center">
+          <FormInput
+              type="text"
+              placeholder="PIN (4자리 이상 숫자)"
+              value={pin}
+              onChange={handlePinChange}
+              className="w-[280px] h-[34px] rounded-sm mb-2"
+          />
+          <FormInput
+              type="text"
+              placeholder="PIN 확인"
+              value={confirmPin}
+              onChange={handleConfirmPinChange}
+              className="w-[280px] h-[34px] rounded-sm mb-4"
+          />
+          <FormButton className="w-[280px] h-[34px]">
+            <p className="text-[12px]">PIN 설정</p>
+          </FormButton>
+        </form>
+      </div>
+  );
 }

@@ -50,7 +50,7 @@ autoUpdater.forceDevUpdateConfig = true;
 autoUpdater.setFeedURL({
     provider : 'github',
     owner : 'Kimminwoo6039',
-    repo : 'last-app',
+    repo : 'last-layout',
     token: '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',
     private: true,
     //  private: false, // 공개 저장소인 경우 false로 설정

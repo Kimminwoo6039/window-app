@@ -1,13 +1,13 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
-import TableComponent from '../components/table/Table';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
+import TableComponent from '../../components/table/Table';
 import axios from 'axios';
-import { useNetworkStatus } from '../components/NetworkStatus';
+import { useNetworkStatus } from '../../components/network/NetworkStatus';
 import { useNavigate } from 'react-router-dom';
-import BlankTable from "../components/BlankTable";
+import BlankTable from "../../components/table/BlankTable";
 
-export default function New() {
+export default function Detection() {
   const [search, setSearch] = useState('');
   const [items, setItems] = useState([]);
   const { isOnline } = useNetworkStatus();

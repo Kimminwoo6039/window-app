@@ -26,7 +26,7 @@ const path = require('path');
                     "topic": "news",
                     "notification": {
                         "title": "Breaking News",
-                        "body": "New news story available."
+                        "body": "Detection news story available."
                     },
                     "data": {
                         "story_id": "story_12345"
