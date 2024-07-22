@@ -13,7 +13,13 @@ export default function PinCheck() {
     };
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+        const active = localStorage.getItem("activation");
+        const loginStatus = localStorage.getItem("loginStatus");
+        const expiration = localStorage.getItem("expiry");
+        console.log(active)
+        console.log(loginStatus)
+        console.log(expiration)
+        // e.preventDefault();
         console.log("등록");
         localStorage.setItem("loginStatus", "true");
         navigate('/', {replace: true});
