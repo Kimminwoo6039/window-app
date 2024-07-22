@@ -20,6 +20,7 @@ const icons = [
     path.join(__dirname, '/meer_1.png'),
     path.join(__dirname, '/meer.png'),
 ];
+const admin = require('firebase-admin'); // Firebase Admin SDK
 
 // 초기화
 let mainWindow;
@@ -28,6 +29,15 @@ let intervalId;
 let iconIndex = 0;
 let db;
 
+
+// Initialize Firebase Admin SDK
+const serviceAccount = require(path.join(__dirname, '/meer-856f7-ed67da0eef70.json'));
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+});
+
+const auth = admin.auth();
+const messaging = admin.messaging();
 
 /**
  * 자동업데이트
@@ -252,7 +262,7 @@ function createWindow() {
         icon: path.join(__dirname, '/meer.png')
     });
 
-    mainWindow.webContents.openDevTools()
+    //mainWindow.webContents.openDevTools()
 
     if (!app.requestSingleInstanceLock()) {
         app.quit(); // 두 번째 인스턴스가 실행되려고 하면 애플리케이션 종료
@@ -402,12 +412,13 @@ app.on('ready', async () => {
     } catch (e) {
         console.log('error')
     }
-    ipcMain.on("storeFCMToken", (e, token) => {
+    ipcMain.on("storeFCMToken", (e, token) =>  {
         store.set('fcm_token', token);
     });
 
     ipcMain.on("getFCMToken", async (e) => {
         e.sender.send('getFCMToken', store.get('fcm_token'));
+        await messaging.subscribeToTopic(store.get('fcm_token'),"allusers");
     });
 });
 

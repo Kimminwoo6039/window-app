@@ -21,6 +21,7 @@ app.post('/send', (req, res) => {
             title: title,
             body: body
         },
+        topic: topic,
          token: token
     };
 

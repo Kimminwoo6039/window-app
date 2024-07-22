@@ -23,6 +23,7 @@ const path = require('path');
         const url = 'https://fcm.googleapis.com/v1/projects/meer-856f7/messages:send';
         const message = {
             message: {
+
                     "topic": "news",
                     "notification": {
                         "title": "Breaking News",

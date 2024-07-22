@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+
 // Increase the max listeners limit to avoid warnings
 ipcRenderer.setMaxListeners(30);
 
