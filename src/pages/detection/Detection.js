@@ -75,6 +75,8 @@ export default function Detection() {
                 id="search"
                 placeholder="검색"
                 onKeyPress={handleKeyPress}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
             />
             <form onSubmit={onSubmit}>
               <Button className="w-[80px] h-[34px] text-[12px] rounded-sm">

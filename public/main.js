@@ -252,7 +252,7 @@ function createWindow() {
         icon: path.join(__dirname, '/meer.png')
     });
 
-    //mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
     if (!app.requestSingleInstanceLock()) {
         app.quit(); // 두 번째 인스턴스가 실행되려고 하면 애플리케이션 종료
