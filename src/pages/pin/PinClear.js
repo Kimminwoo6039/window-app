@@ -12,6 +12,12 @@ import { Label } from "../../components/ui/label";
 import FormButton from "../../components/common/FormButton";
 import FormInput from "../../components/common/FormInput";
 
+
+/**
+ * pin 번호 초기화 하는 다이어로그
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function PinClear() {
   const [currentPin, setCurrentPin] = useState('');
   const [newPin, setNewPin] = useState('');

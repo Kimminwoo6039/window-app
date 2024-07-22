@@ -2,6 +2,11 @@ import React, { FormEvent } from "react";
 import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * 실시간 탐지 페이지
+ * 실시간 탐지 유/무 설정 페이지
+ */
+
 interface HomeProps {
   status: boolean;
 }

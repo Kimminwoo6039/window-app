@@ -4,6 +4,12 @@ import PinReset from "./PinReset";
 import FormInput from "../../components/common/FormInput";
 import FormButton from "../../components/common/FormButton";
 
+/**
+ * 핀 확인하는 페이지
+ * 핀 체크후 Home 으로 이동하는 페이지
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function PinCheck() {
     const [pin, setPin] = useState('');
     const navigate = useNavigate();

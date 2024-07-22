@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 import FormButton from "../../components/common/FormButton";
 import FormInput from "../../components/common/FormInput";
 
+/**
+ * 핀 등록하는 페이지 > 라이선스 등록후
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function PinRegister() {
   const navigate = useNavigate();
   const [pin, setPin] = useState('');

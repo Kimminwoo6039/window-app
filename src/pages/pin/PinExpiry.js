@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 import FormButton from "../../components/common/FormButton";
 import FormInput from "../../components/common/FormInput";
 
+/**
+ * 라이센스 만료 페이지
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function PinExpiry() {
   const navigate = useNavigate();
   const [licenseKey, setLicenseKey] = useState('');

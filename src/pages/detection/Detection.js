@@ -7,6 +7,13 @@ import { useNetworkStatus } from '../../components/network/NetworkStatus';
 import { useNavigate } from 'react-router-dom';
 import BlankTable from "../../components/table/BlankTable";
 
+/**
+ * 검역소
+ * IpcRender 를 통해서 localdb 가져오는 로직
+ * @returns {JSX.Element}
+ * @constructor
+ */
+
 export default function Detection() {
   const [search, setSearch] = useState('');
   const [items, setItems] = useState([]);

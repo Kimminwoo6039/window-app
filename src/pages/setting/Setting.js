@@ -9,6 +9,17 @@ import {
 } from "../../components/ui/select";
 import {useEffect, useState} from "react";
 
+/**
+ * 설정 정보 페이지 (세팅)
+ * @param label
+ * @param description
+ * @param placeholder
+ * @param options
+ * @param value
+ * @param onChange
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const SettingOption = ({ label, description, placeholder, options, value, onChange }) => (
     <div className="flex flex-col rounded-lg border p-3 gap-1 h-[111px] justify-center md:w-full items-start bg-[#FFFFFF]">
         <div className="text-[13px] text-[#515151] font-bold">{label}</div>

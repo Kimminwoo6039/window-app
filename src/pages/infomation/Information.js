@@ -3,6 +3,11 @@ import {Button} from "../../components/ui/button";
 import LicenceClear from "../licence/LicenceClear";
 import PinClear from "../pin/PinClear";
 
+/**
+ * 계정 정보 페이지
+ *
+ */
+
 interface InfoCardProps {
     title: string;
     content: string;

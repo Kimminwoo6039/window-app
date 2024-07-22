@@ -13,6 +13,11 @@ import FormButton from "../../components/common/FormButton";
 import FormInput from "../../components/common/FormInput";
 import { Label } from "../../components/ui/label";
 
+/**
+ * 등록된 pin 번호를 리셋하는 다이어로그 페이지
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function PinReset() {
   const navigate = useNavigate();
 
