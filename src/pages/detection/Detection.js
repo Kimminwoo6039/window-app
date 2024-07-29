@@ -12,53 +12,38 @@ import BlankTable from "../../components/table/BlankTable";
  * @returns {JSX.Element}
  * @constructor
  */
-
 export default function Detection() {
   const [search, setSearch] = useState('');
   const [items, setItems] = useState([]);
   const { isOnline } = useNetworkStatus();
   let navigate = useNavigate();
 
-  useEffect(() => {
-    fetchDataServer()
-  }, []);
-
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 폼의 기본 제출 동작 방지
+    setItems([]); // 검색 시 테이블 비우기
     fetchDataServer(); // 폼 제출 시 데이터 가져오기
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      setItems([]); // 엔터 키 입력 시 테이블 비우기
       fetchDataServer(); // 엔터 키 입력 시 데이터 가져오기
     }
   };
 
   const fetchDataServer = () => {
-
-
-    window.electron.fetchDataFromDB().then((result) => {
-      console.log("ㅋㅋ")
-      console.log(result)
+    window.electron.fetchDataFromDB(search, 1).then((result) => {
       setItems(result);
     }).catch((error) => {
       console.error('Error fetching data from database:', error);
     });
-  }
+  };
 
-    // 검색 입력값 직접 가져오기
-  //   const searchInput = document.getElementById('search').value;
-  //
-  //   // axios 요청에 직접 검색어 적용
-  //   axios
-  //   .get(`http://localhost:5000/api/items?search=${searchInput}`)
-  //   .then(response => {
-  //     setItems(response.data); // 데이터 설정
-  //   })
-  //   .catch(error => {
-  //     console.error('Error fetching data:', error);
-  //   });
-  // };
+  useEffect(() => {
+    fetchDataServer()
+  }, []);
+
+
 
   return (
       <>
@@ -85,7 +70,7 @@ export default function Detection() {
           </div>
           <div className="mt-6"></div>
           <div className="w-[740px] h-[315px] lg:w-full lg:h-full p-1">
-            {items.length === 0 ? <BlankTable />  : <TableComponent items={items} />}
+            {items.length === 0 ? <BlankTable /> : <TableComponent search={search} />}
           </div>
         </main>
         <div className="flex flex-row justify-end gap-2 m-10">

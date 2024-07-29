@@ -29,7 +29,11 @@ contextBridge.exposeInMainWorld('electron', {
     ipcRenderer.send(channel, data);
   },
 
-  fetchDataFromDB: () => ipcRenderer.invoke('fetch-data-from-db'),
+  fetchDataFromDB: (search, page) => ipcRenderer.invoke('fetch-data-from-db', search, page),
+
+  getImagesFromFolder: () => ipcRenderer.invoke('get-images-from-folder'),
+
+  openImage: (imagePath) => ipcRenderer.invoke('open-image', imagePath),
 
   onRemoveStr: () => ipcRenderer.removeAllListeners('storage'),
 

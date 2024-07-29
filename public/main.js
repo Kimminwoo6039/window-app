@@ -5,6 +5,7 @@ const {
     Menu,
     ipcMain,
     dialog,
+    shell,
     Notification, screen, desktopCapturer,
 } = require('electron');
 const path = require('path');
@@ -15,12 +16,16 @@ const fs = require('fs');
 const log = require('electron-log');
 const {autoUpdater} = require('electron-updater')
 const ProgressBar = require('electron-progressbar');
-const { setup: setupPushReceiver } = require('electron-push-receiver');
+const {setup: setupPushReceiver} = require('electron-push-receiver');
 const icons = [
     path.join(__dirname, '/meer_1.png'),
     path.join(__dirname, '/meer.png'),
 ];
 const admin = require('firebase-admin'); // Firebase Admin SDK
+const { promisify } = require('util');
+const readdir = promisify(fs.readdir);
+
+
 
 // 초기화
 let mainWindow;
@@ -48,7 +53,7 @@ log.transports.file.level = 'info';
 // 자동업데이트 로그 설정
 autoUpdater.logger = log;
 // 자동업데이트 자동다운로드 false
-autoUpdater.autoDownload=false
+autoUpdater.autoDownload = false
 
 // 개발 환경에서도 업데이트를 확인하도록 설정
 autoUpdater.autoDownload = false;
@@ -57,9 +62,9 @@ autoUpdater.forceDevUpdateConfig = true;
 
 // 자동업데이트 연결할 repository
 autoUpdater.setFeedURL({
-    provider : 'github',
-    owner : 'Kimminwoo6039',
-    repo : 'window-app',
+    provider: 'github',
+    owner: 'Kimminwoo6039',
+    repo: 'window-app',
     token: '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',
     private: true,
     //  private: false, // 공개 저장소인 경우 false로 설정
@@ -145,54 +150,117 @@ autoUpdater.on("update-downloaded", (info) => {
 
 function dbConnection() {
 
-    const dbPath = path.resolve(app.getAppPath(), 'meercatch.db')
+    // dummy
+    const insertStatements = [
+        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (0, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '2 2 3 3', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
+        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (1, 0, 'https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg', '3 4 ', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
+        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (2, 0, 'https://helpx.adobe.com/content/dam/help/en/photoshop/using/quick-actions/remove-background-before-qa1.png', '2', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
+        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (3, 0, 'https://www.urbanbrush.net/web/wp-content/uploads/edd/2023/02/urban-20230228144115810458.jpg', '3', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
+        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (4, 0, 'https://demo.ycart.kr/shopboth_farm_max5_001/data/editor/1612/cd2f39a0598c81712450b871c218164f_1482469221_493.jpg', '4', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
+        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (5, 0, 'https://www.urbanbrush.net/web/wp-content/uploads/edd/2023/02/urban-20230228092421948485.jpg', '4 4', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
+        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (6, 0, 'https://image.utoimage.com/preview/cp872722/2024/07/202407002202_500.jpg', '2 3 4', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
+        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (7, 0, 'https://www.utoimage.com/data/main/all/20240718100556_160626448766986a7455ce6.jpg', '4 4 ', 'OBJ', 0, datetime('now', 'localtime'), NULL)`
+    ];
 
-    log.info('DataBase 경로=',dbPath)
-    db = new Database('meercatch.db', {verbose: console.log});
-    db.pragma("journal_mode = WAL");
+    try {
+        // const dbPath = path.resolve(app.getAppPath(), 'meercatch.db')
+        const dbPath = path.join('D:', '/meercatch.db');
+        log.info('DataBase 경로=', dbPath)
+        //db.pragma("journal_mode = WAL");
+        log.info('db', db)
+
+        db = new Database(dbPath, {verbose: console.log});
 
 // 테이블 존재 여부 확인
-    const tableExists = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='T_HISTORY';`).get();
 
-    if (tableExists) {
-        log.info('테이블 T_HISTORY가 이미 존재합니다.')
-    } else {
-        // 테이블 생성 쿼리 실행
-        db.exec(`
-  CREATE TABLE "T_HISTORY" (
-    "HISTORY_SEQ" INTEGER NOT NULL,
-    "EVENT_TYPE" INTEGER NOT NULL,
-    "EVENT_IMAGE" UNKNOWN NOT NULL,
-    "EVENT_CODE" VARCHAR(2048) NULL,
-    "EVENT_OBJ" VARCHAR(2048) NULL,
-    "EVENT_VERIFY" TINYINT NOT NULL,
-    "REG_DATE" DATETIME NULL,
-    "EVENT_SCORE" VARCHAR(2048) NULL,
-    PRIMARY KEY ("HISTORY_SEQ")
-  )
-`);
+        const tableExists = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='T_HISTORY';`).get();
+        log.info('테이블여부 확인', tableExists);
 
-        try {
+
+        if (tableExists) {
+            log.info('테이블 T_HISTORY가 이미 존재합니다.')
+        } else {
+
+            // 테이블 생성 쿼리 실행
             db.exec(`
-        INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(0, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL)
-        `);
-        } catch (e) {
-            log.info(e.message)
+              CREATE TABLE "T_HISTORY" (
+                "HISTORY_SEQ" INTEGER NOT NULL,
+                "EVENT_TYPE" INTEGER NOT NULL,
+                "EVENT_IMAGE" UNKNOWN NOT NULL,
+                "EVENT_CODE" VARCHAR(2048) NULL,
+                "EVENT_OBJ" VARCHAR(2048) NULL,
+                "EVENT_VERIFY" TINYINT NOT NULL,
+                "REG_DATE" DATETIME NULL,
+                "EVENT_SCORE" VARCHAR(2048) NULL,
+                PRIMARY KEY ("HISTORY_SEQ")
+              )
+            `);
+
+            try {
+                for (const stmt of insertStatements) {
+                    db.exec(stmt);
+                }
+                //         db.exec(`
+                // INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(0, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL),
+                // INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(1, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL),
+                // INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(2, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL),
+                // INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(3, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL),
+                // INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(4, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL),
+                // INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(5, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL),
+                // INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(6, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL),
+                // INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES(7, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '둔부', 'OBJ', 0, datetime('now', 'localtime'), NULL)
+                // `);
+            } catch (e) {
+                log.info(e.message)
+            }
+
+
+            log.info('테이블 T_HISTORY가 생성되었습니다.')
         }
-
-
-        log.info('테이블 T_HISTORY가 생성되었습니다.')
+    } catch (e) {
+        log.error(e);
     }
 }
 
 
-// IPC to fetch data from the database
-ipcMain.handle('fetch-data-from-db', async (event) => {
-    dbConnection()
+// Handle the IPC request from renderer process
+// ipcMain.handle('fetch-data-from-db', async (event, search, page) => {
+//     try {
+//         const pageSize = 20; // Number of items per page
+//         const offset = (page - 1) * pageSize;
+//         const query = `
+//             SELECT * FROM T_HISTORY
+//             WHERE EVENT_CODE LIKE ?
+//             LIMIT ? OFFSET ?
+//         `;
+//         const results = await db.prepare(query, [`%${search}%`, pageSize, offset]).all();
+//         console.log(results)
+//         // Ensure the data is serializable
+//         return results
+//     } catch (error) {
+//         console.error('Error fetching data from database:', error);
+//         throw error; // Propagate the error
+//     }
+// });
+
+
+ipcMain.handle('fetch-data-from-db', async (event, search, page) => {
     return new Promise((resolve, reject) => {
-        resolve(
-            db.prepare('select * from T_HISTORY').all()
-        )
+        const pageSize = 10 // Number of items per page
+        const offset = (page - 1) * pageSize;
+        const query = `
+            SELECT * FROM T_HISTORY 
+            WHERE EVENT_CODE LIKE ? 
+            LIMIT ? OFFSET ?
+        `;
+
+        try {
+            // Note: `db.prepare().all()` is used here for `better-sqlite3`
+            const results = db.prepare(query).all([`%${search}%`, pageSize, offset]);
+            resolve(results);
+        } catch (err) {
+            reject(err);
+        }
     });
 });
 
@@ -257,12 +325,14 @@ function createWindow() {
             preload: path.join(__dirname, '/preload.js'),
             nodeIntegration: true,
             contextIsolation: true,
+            webSecurity: false,
         },
+        // This is important for accessing file URLs
         autoHideMenuBar: true,
         icon: path.join(__dirname, '/meer.png')
     });
 
-    //mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 
     if (!app.requestSingleInstanceLock()) {
         app.quit(); // 두 번째 인스턴스가 실행되려고 하면 애플리케이션 종료
@@ -284,6 +354,8 @@ function createWindow() {
         mainWindow.webContents.send('storage', 'loginStatus');
         mainWindow.webContents.send('navigate', '/pin/check');
         if (mainWindow.isVisible()) {
+            mainWindow.webContents.send('storage', 'loginStatus');
+            mainWindow.webContents.send('navigate', '/pin/check');
             console.log(1)
         }
     });
@@ -313,6 +385,8 @@ function createWindow() {
         slashes: true
     });
 
+    dbConnection()
+
     mainWindow.loadURL(startUrl);
 
     // Setup push receiver
@@ -334,18 +408,21 @@ function createTray() {
     const contextMenu = Menu.buildFromTemplate([
         {
             label: '미어캐치 열기', click: () => {
+                mainWindow.webContents.send('storage', 'loginStatus');
                 mainWindow.webContents.send('navigate', '/pin/check');
                 toggleWindow();
             }
         },
         {
             label: '환결성정', click: () => {
+                mainWindow.webContents.send('storage', 'loginStatus');
                 mainWindow.webContents.send('navigate', '/pin/check');
                 toggleWindow();
             }
         },
         {
             label: '계정정보', click: () => {
+                mainWindow.webContents.send('storage', 'loginStatus');
                 mainWindow.webContents.send('navigate', '/pin/check');
                 toggleWindow();
             }
@@ -353,6 +430,7 @@ function createTray() {
         {
             label: '종료', click: () => {
                 mainWindow.webContents.send('storage', 'loginStatus');
+                mainWindow.webContents.send('navigate', '/pin/check');
                 app.quit();
             }
         }
@@ -395,30 +473,53 @@ app.on('window-all-closed', () => {
 });
 
 
-
 app.on('activate', () => {
     if (mainWindow === null) {
         createWindow();
     }
 });
+const { exec } = require('child_process');
+const os = require('os');
+ipcMain.handle('open-image', async (event, imagePath) => {
+    try {
+        await shell.openPath(imagePath)
+    } catch (error) {
+        console.error('Error opening image:', error);
+    }
+});
+
+ipcMain.handle('get-images-from-folder', async () => {
+    const folderPath = 'D:/images'; // External drive path
+
+    try {
+        const files = await readdir(folderPath);
+        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/.test(file));
+        return imageFiles.map(file => `file://${path.join(folderPath, file)}`);
+    } catch (error) {
+        console.error('Error reading folder:', error);
+        return [];
+    }
+});
+
 
 // 앱이 준비상태가 되었을때
 app.on('ready', async () => {
     app.setAppUserModelId("MeerCat.ch");
     createWindow();
     createTray();
+
     try {
         await autoUpdater.checkForUpdatesAndNotify();
     } catch (e) {
         console.log('error')
     }
-    ipcMain.on("storeFCMToken", (e, token) =>  {
+    ipcMain.on("storeFCMToken", (e, token) => {
         store.set('fcm_token', token);
     });
 
     ipcMain.on("getFCMToken", async (e) => {
         e.sender.send('getFCMToken', store.get('fcm_token'));
-        await messaging.subscribeToTopic(store.get('fcm_token'),"allusers");
+        await messaging.subscribeToTopic(store.get('fcm_token'), "allusers");
     });
 });
 

@@ -3,19 +3,7 @@ import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Link, useLocation } from "react-router-dom";
 import { useToast } from "../ui/use-toast";
-
-interface StatusType {
-  props: boolean;
-  setProps: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-interface NavLinkProps {
-  to: string;
-  iconOn: string;
-  iconOff: string;
-  label: string;
-  isActive: boolean;
-}
+import {NavLinkProps} from "react-router-dom";
 
 const NavLink: React.FC<NavLinkProps> = ({ to, iconOn, iconOff, label, isActive }) => (
     <TooltipProvider>
@@ -35,7 +23,7 @@ const NavLink: React.FC<NavLinkProps> = ({ to, iconOn, iconOff, label, isActive 
     </TooltipProvider>
 );
 
-export default function SideBar({ props, setProps }: StatusType) {
+export default function SideBar({ props, setProps }) {
   const { toast } = useToast();
   let location = useLocation();
 
