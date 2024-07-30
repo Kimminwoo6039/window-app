@@ -28,9 +28,14 @@ const readdir = promisify(fs.readdir);
 const net = require('net');
 let client;
 // ######
-const PIPE_NAME = '\\\\.\\pipe\\MyNamedPipe';
+const PIPE_NAME = '\\\\.\\pipe\\kwspipe';
+
+
+
+
+// 클라이언트 연결 및 자동 재연결 설정
 function createPipeClient() {
-     client = net.connect(PIPE_NAME, () => {
+    client = net.connect(PIPE_NAME, () => {
         console.log('Connected to pipe server.');
         client.write('Hello from Electron!');
     });
@@ -40,13 +45,32 @@ function createPipeClient() {
     });
 
     client.on('end', () => {
-        console.log('Disconnected from server.');
+        // console.log('Disconnected from server.');
+        reconnect(); // 연결이 끊어지면 자동으로 재연결 시도
     });
 
     client.on('error', (err) => {
-        console.error('Error:', err);
+        // console.error('Error:', err);
+        reconnect(); // 오류 발생 시 자동으로 재연결 시도
     });
 }
+
+// 클라이언트 재연결 함수
+function reconnect() {
+    // console.log('Reconnecting to pipe server...');
+    setTimeout(() => {
+        createPipeClient();
+    }, 1000); // 1초 후에 재연결 시도
+}
+
+// 주기적
+function startServiceLogic() {
+    console.log('connected to service logic');
+    intervalId = setInterval(async () => {
+        createPipeClient()
+    }, 1000);
+}
+
 // ######
 
 // 초기화
@@ -55,6 +79,8 @@ let tray;
 let intervalId;
 let iconIndex = 0;
 let db;
+
+
 
 
 // Initialize Firebase Admin SDK
@@ -332,6 +358,7 @@ ipcMain.on('close', () => {
 });
 
 
+
 /**
  * window 생성창
  */
@@ -353,7 +380,6 @@ function createWindow() {
         autoHideMenuBar: true,
         icon: path.join(__dirname, '/meer.png')
     });
-
 
 
     // mainWindow.webContents.openDevTools()
@@ -392,6 +418,8 @@ function createWindow() {
     // 팝업이 올라왔을때
     ['show', 'restore'].forEach(
         event => mainWindow.on(event, () => {
+            console.log('Sending message to server:', 'openenenenenenenen!!');
+            client.write('openenenenenenenen!!')
             console.log("open")
         }));
 
@@ -432,7 +460,6 @@ function createTray() {
     const contextMenu = Menu.buildFromTemplate([
         {
             label: '미어캐치 열기', click: () => {
-                client.write('openenenenenenenen!!')
                 mainWindow.webContents.send('storage', 'loginStatus');
                 mainWindow.webContents.send('navigate', '/pin/check');
                 toggleWindow();
@@ -456,6 +483,7 @@ function createTray() {
             label: '종료', click: () => {
                 mainWindow.webContents.send('storage', 'loginStatus');
                 mainWindow.webContents.send('navigate', '/pin/check');
+                client.end();
                 app.quit();
             }
         }
@@ -529,6 +557,7 @@ ipcMain.handle('get-images-from-folder', async () => {
 
 // 앱이 준비상태가 되었을때
 app.on('ready', async () => {
+    //startServiceLogic()
     app.setAppUserModelId("MeerCat.ch");
     createWindow();
     createTray();
@@ -545,9 +574,8 @@ app.on('ready', async () => {
         e.sender.send('getFCMToken', store.get('fcm_token'));
         await messaging.subscribeToTopic(store.get('fcm_token'), "allusers");
     });
-    createPipeClient()
     console.log(store.get('fcm_token'))
-    client.write('ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssaeqwewqeqewqeqweqewqweqweqweqwe');
+    createPipeClient();
 });
 
 ipcMain.on("pushNotification", (e, result) => {

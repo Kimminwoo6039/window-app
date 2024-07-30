@@ -8,6 +8,7 @@ import { Table, Spin, Empty } from 'antd';
  * @returns {JSX.Element}
  */
 export default function TableComponent({ search }) {
+    const defaultImage = require('../../images/no-image-found.png'); // 기본 이미지 경로
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
@@ -40,11 +41,18 @@ export default function TableComponent({ search }) {
                 transition: 'transform 0.1s ease, opacity 0.1s ease',
             }}
             className="h-[35px] w-[50px] m-auto hover:cursor-pointer"
-            onMouseEnter={() => handleMouseEnter(src, alt)}
-            onMouseLeave={handleMouseLeave}
+            // onMouseEnter={() => handleMouseEnter(src, alt)}
+            // onMouseLeave={handleMouseLeave}
             onClick={() => handleOpenImage(src)}  // 수정: 래퍼 함수로 클릭 이벤트 핸들러 설정
+            onError={handleImageError}
         />
     );
+
+
+    // 이미지 로드 실패 시 호출되는 핸들러
+    const handleImageError = (event) => {
+        event.target.src = defaultImage;
+    };
 
     // 마우스 오버 시 이미지 미리보기 설정
     const handleMouseEnter = (src, alt) => {
@@ -142,7 +150,7 @@ export default function TableComponent({ search }) {
                 dataSource={items.map(item => ({
                     key: item['HISTORY_SEQ'],
                     date: <p className="text-[10px]">{item['REG_DATE']}</p>,
-                    image: <ImagePreview  src={item['EVENT_IMAGE']} alt="Sample Image" />,
+                    image: <ImagePreview src={item['EVENT_IMAGE']} alt="Sample Image"  />,
                     // filename: <p className="text-[10px]">{item['FILE_NAME']}</p>,
                     type: <p className="text-[10px]">{String(item['EVENT_OBJ'])}</p>,
                     content: <p className="text-[10px] flex ml-1">{handleUpdateEach(item['EVENT_CODE'])}</p>,

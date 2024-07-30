@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "private": true,
   "main": "public/main.js",
   "build": {
@@ -80,16 +80,16 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "win32-api": "^26.0.2",
-    "win32-def": "^22.0.0"
+    "win32-def": "^22.0.0",
+    "better-sqlite3": "^11.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "el-start": "electron .",
     "electron-start": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
-    "electron-pack": "npm run build && electron-builder build --win --publish always -c.extraMetadata.main=build/main.js && npm run rebuild",
-    "rebuild": "electron-rebuild -f -w better-sqlite3",
-    "a": "electron-rebuild"
+    "electron-pack": "npm run build && electron-builder build --win --publish always -c.extraMetadata.main=build/main.js && electron-rebuild -f -w better-sqlite3",
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "eslintConfig": {
     "extends": [

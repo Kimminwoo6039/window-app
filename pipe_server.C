@@ -1,8 +1,8 @@
 #include <windows.h>
 #include <stdio.h>
 
-#define PIPE_NAME "\\\\.\\pipe\\MyNamedPipe"
-
+#define PIPE_NAME "\\\\.\\pipe\\kwspipe"
+// gcc -o pipe_server pipe_server.c -lws2_32
 int main()
 {
     HANDLE hPipe;
