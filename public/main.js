@@ -25,7 +25,29 @@ const admin = require('firebase-admin'); // Firebase Admin SDK
 const { promisify } = require('util');
 const readdir = promisify(fs.readdir);
 
+const net = require('net');
+let client;
+// ######
+const PIPE_NAME = '\\\\.\\pipe\\MyNamedPipe';
+function createPipeClient() {
+     client = net.connect(PIPE_NAME, () => {
+        console.log('Connected to pipe server.');
+        client.write('Hello from Electron!');
+    });
 
+    client.on('data', (data) => {
+        console.log('Received from server:', data.toString());
+    });
+
+    client.on('end', () => {
+        console.log('Disconnected from server.');
+    });
+
+    client.on('error', (err) => {
+        console.error('Error:', err);
+    });
+}
+// ######
 
 // 초기화
 let mainWindow;
@@ -332,6 +354,8 @@ function createWindow() {
         icon: path.join(__dirname, '/meer.png')
     });
 
+
+
     // mainWindow.webContents.openDevTools()
 
     if (!app.requestSingleInstanceLock()) {
@@ -408,6 +432,7 @@ function createTray() {
     const contextMenu = Menu.buildFromTemplate([
         {
             label: '미어캐치 열기', click: () => {
+                client.write('openenenenenenenen!!')
                 mainWindow.webContents.send('storage', 'loginStatus');
                 mainWindow.webContents.send('navigate', '/pin/check');
                 toggleWindow();
@@ -507,7 +532,6 @@ app.on('ready', async () => {
     app.setAppUserModelId("MeerCat.ch");
     createWindow();
     createTray();
-
     try {
         await autoUpdater.checkForUpdatesAndNotify();
     } catch (e) {
@@ -521,6 +545,9 @@ app.on('ready', async () => {
         e.sender.send('getFCMToken', store.get('fcm_token'));
         await messaging.subscribeToTopic(store.get('fcm_token'), "allusers");
     });
+    createPipeClient()
+    console.log(store.get('fcm_token'))
+    client.write('ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssaeqwewqeqewqeqweqewqweqweqweqwe');
 });
 
 ipcMain.on("pushNotification", (e, result) => {
