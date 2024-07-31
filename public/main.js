@@ -200,7 +200,7 @@ function dbConnection() {
 
     // dummy
     const insertStatements = [
-        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (0, 0, 'https://blog.kakaocdn.net/dn/0mySg/btqCUccOGVk/nQ68nZiNKoIEGNJkooELF1/img.jpg', '2 2 3 3', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
+        `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (0, 0, 'D://images/1.jpg', '2 2 3 3', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
         `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (1, 0, 'https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg', '3 4 ', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
         `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (2, 0, 'https://helpx.adobe.com/content/dam/help/en/photoshop/using/quick-actions/remove-background-before-qa1.png', '2', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
         `INSERT INTO T_HISTORY (HISTORY_SEQ, EVENT_TYPE, EVENT_IMAGE, EVENT_CODE, EVENT_OBJ, EVENT_VERIFY, REG_DATE, EVENT_SCORE) VALUES (3, 0, 'https://www.urbanbrush.net/web/wp-content/uploads/edd/2023/02/urban-20230228144115810458.jpg', '3', 'OBJ', 0, datetime('now', 'localtime'), NULL)`,
@@ -418,7 +418,8 @@ function createWindow() {
     // 팝업이 올라왔을때
     ['show', 'restore'].forEach(
         event => mainWindow.on(event, () => {
-            console.log('Sending message to server:', 'openenenenenenenen!!');
+            mainWindow.webContents.send('storage', 'loginStatus');
+            mainWindow.webContents.send('navigate', '/pin/check');
             client.write('openenenenenenenen!!')
             console.log("open")
         }));
@@ -483,7 +484,6 @@ function createTray() {
             label: '종료', click: () => {
                 mainWindow.webContents.send('storage', 'loginStatus');
                 mainWindow.webContents.send('navigate', '/pin/check');
-                client.end();
                 app.quit();
             }
         }
@@ -583,11 +583,14 @@ ipcMain.on("pushNotification", (e, result) => {
 });
 
 function showNotification(result) {
+    console.log(result)
     const notification = new Notification({
         title: result.notification.title,
         body: result.notification.body,
         icon: path.join(__dirname, '/meer.png'),
     });
 
+
     notification.show();
+    client.write(Buffer.from(result.notification.body, 'utf8'))
 }

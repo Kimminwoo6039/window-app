@@ -1,11 +1,11 @@
 {
   "name": "my-app",
-  "version": "1.0.4",
+  "version": "1.0.0",
   "private": true,
   "main": "public/main.js",
   "build": {
     "appId": "com.example.myapp",
-    "productName": "미어캐츠",
+    "productName": "meercatch",
     "icon": "public/meer.ico",
     "publish": [
       {

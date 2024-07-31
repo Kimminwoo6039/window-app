@@ -6,7 +6,7 @@
 int main()
 {
     HANDLE hPipe;
-    char buffer[128];
+    char buffer[168000];
     DWORD dwRead;
 
     hPipe = CreateNamedPipe(

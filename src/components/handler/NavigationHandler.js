@@ -26,6 +26,7 @@ const NavigationHandler = () => {
             window.electron.onLocalStorage((event, path) => {
                 console.log('Navigating to:', path);
                 localStorage.removeItem(path);
+                navigate('/');
             });
         } else {
             console.log('window.electron or window.electron.onNavigate is not defined in React');

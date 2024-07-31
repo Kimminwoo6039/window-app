@@ -23,8 +23,8 @@ const path = require('path');
         const url = 'https://fcm.googleapis.com/v1/projects/meer-856f7/messages:send';
         const message = {
             message: {
-
-                    "topic": "news",
+                    "token":"cBefIMFGSZc:APA91bECJoUef97VGYUYWCY0EPmTmybtFvMPI5jXxipSIdlNGcMIHNqY5JzIYWkoWQIKCFwsJPEGzBHdCWHPkV9onacnpDP_1pTLCEJljg8dx6EgnhPKgZKPw5qik1Npfe2F3y9eJIbC",
+                    //"topic": "allusers",
                     "notification": {
                         "title": "Breaking News",
                         "body": "Detection news story available."

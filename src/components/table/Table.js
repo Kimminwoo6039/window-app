@@ -143,10 +143,17 @@ export default function TableComponent({ search }) {
         },
     ];
 
+    const rowSelection = {
+        onChange: (selectedRowKeys) => {
+            console.log('Selected row keys:', selectedRowKeys);
+        },
+    };
+
     return (
         <div className="scrollView" onScroll={handleScroll} style={{ height: '330px', overflowY: 'auto' }}>
             <Table
                 className="p-0"
+                rowSelection={rowSelection}
                 dataSource={items.map(item => ({
                     key: item['HISTORY_SEQ'],
                     date: <p className="text-[10px]">{item['REG_DATE']}</p>,
