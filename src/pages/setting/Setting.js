@@ -68,12 +68,40 @@ export default function Setting() {
         return saved === "true" || saved === null; // default to true if not set
     });
 
+    // 설정값 전체 가져오기
+    const [list,setList] = useState([{}]);
+
+    const fetchData = async () => {
+
+        try {
+            // 페이지 번호와 검색어를 포함하여 데이터 요청
+            const result = await window.electron.fetchDataSettingFromDB();
+            if (result.length > 0) {
+                setList(result[0]); // 배열의 첫 번째 요소를 객체로 설정
+            }
+
+        } catch (error) {
+            console.error('Error fetching data from database:', error);
+        } finally {
+
+        }
+    };
+
+    const handleOptionChange = (field, value) => {
+        setList((prevList) => {
+            const updatedList = { ...prevList, [field]: value };
+            window.electron.sendUpdateSetting(field, value);
+            return updatedList;
+        });
+    };
+
     useEffect(() => {
+        fetchData()
         if (autoLaunch === null) {
             localStorage.setItem("autoLaunch", "true");
             setAutoLaunch(true);
         }
-    }, [autoLaunch]);
+    }, []);
 
     const toggleAutoLaunch = (value) => {
         const booleanValue = value === "true";
@@ -90,23 +118,23 @@ export default function Setting() {
             description: "유해성 콘텐츠가 탐지되는 경우 아래와 같은 조치를 취합니다.",
             placeholder: "콘텐츠 최소화",
             selectOptions: [
-                { value: "Y", label: "콘텐츠 최소화" },
-                { value: "N", label: "콘텐츠 최대화" }
+                { value: 0, label: "콘텐츠 최소화" },
+                { value: 1, label: "콘텐츠 최대화" }
             ],
-            currentValue: undefined, // Set current value if needed
-            onChange: undefined // Set onChange if needed
+            currentValue: list.DETECT_ACTION, // Set current value if needed
+            onChange: (value) => handleOptionChange('DETECT_ACTION', value)
         },
         {
             label: "탐지정책",
             description: "관리자에서 설정한 탐지 정책이 노출 됩니다. 탐지 정책 관리는 관리자에서만 가능합니다.",
             placeholder: "중학교 정책 템플릿",
             selectOptions: [
-                { value: "Y", label: "초등학교 정책 템플릿" },
-                { value: "Y1", label: "중학교 정책 템플릿" },
-                { value: "N", label: "고등학교 정책 템플릿" }
+                { value: 0, label: "초등학교 정책 템플릿" },
+                { value: 1, label: "중학교 정책 템플릿" },
+                { value: 2, label: "고등학교 정책 템플릿" }
             ],
-            currentValue: undefined, // Set current value if needed
-            onChange: undefined // Set onChange if needed
+            currentValue: list.DETECT_GRADE, // Set current value if needed
+            onChange: (value) => handleOptionChange('DETECT_GRADE', value)
         }
     ];
 
@@ -116,42 +144,44 @@ export default function Setting() {
             description: "서비스가 실행되는 시점을 설정할 수 있습니다.",
             placeholder: autoLaunch ? "윈도우 시작 시 자동 실행" : "윈도우 시작 시 자동 중지",
             selectOptions: [
-                { value: "true", label: "윈도우 시작 시 자동 실행" },
-                { value: "false", label: "윈도우 시작 시 자동 중지" }
+                { value: 0, label: "윈도우 시작 시 자동 실행" },
+                { value: 1, label: "윈도우 시작 시 자동 중지" }
             ],
-            currentValue: autoLaunch ? "true" : "false",
-            onChange: toggleAutoLaunch
+            currentValue: list.AUTO_RUN,
+            onChange: (value) => {
+                handleOptionChange('AUTO_RUN', value);
+            }
         },
         {
             label: "알림설정",
             description: "탐지 시 아래와 같은 조건으로 알림이 발송 됩니다.",
             placeholder: "보호자에게 메시지 발송",
             selectOptions: [
-                { value: "Y", label: "보호자에게 메시지 발송" },
-                { value: "N", label: "선생님에게 메시지 발송" }
+                { value: 0, label: "보호자에게 메시지 발송" },
+                { value: 1, label: "선생님에게 메시지 발송" }
             ],
-            currentValue: undefined, // Set current value if needed
-            onChange: undefined // Set onChange if needed
+            currentValue: list.NOTI_TYPE, // Set current value if needed
+            onChange: (value) => handleOptionChange('NOTI_TYPE', value)
         },
         {
             label: "검역소 파일 관리",
             description: "아래 기간 동안 검역소에 파일이 보관 됩니다. (설정 기간이 지나면 오래된 항목 부터 자동으로 삭제 됩니다)",
             placeholder: "30일",
             selectOptions: [
-                { value: "30", label: "30일" }
+                { value: 30, label: "30일" }
             ],
-            currentValue: undefined, // Set current value if needed
-            onChange: undefined // Set onChange if needed
+            currentValue: list.HISTORY_PERIOD, // Set current value if needed
+            onChange: (value) => handleOptionChange('HISTORY_PERIOD', value)
         },
         {
             label: "로그파일 관리",
             description: "아래 기간 동안 로그 파일이 보관 됩니다. (설정 기간이 지나면 오래된 항목 부터 자동으로 삭제 됩니다)",
             placeholder: "30일",
             selectOptions: [
-                { value: "30", label: "30일" }
+                { value: 30, label: "30일" }
             ],
-            currentValue: undefined, // Set current value if needed
-            onChange: undefined // Set onChange if needed
+            currentValue: list.LOG_PERIOD, // Set current value if needed
+            onChange: (value) => handleOptionChange('LOG_PERIOD', value)
         }
     ];
 
@@ -175,8 +205,8 @@ export default function Setting() {
                           <p className="text-[#9D1F32] text-[19px] font-bold">MeerCat.ch</p>
                           <p className="text-[#515151]">Beta</p>
                       </div>
-                      <div className="text-[12px] text-[#8B8B8B] mt-1">제품버전 : 1.0.1</div>
-                      <div className="text-[12px] text-[#8B8B8B]">엔진버전 : 2024.04.08</div>
+                      <div className="text-[12px] text-[#8B8B8B] mt-1">제품버전 : {list.PROD_VER}</div>
+                      <div className="text-[12px] text-[#8B8B8B]">엔진버전 : {list.ENGINE_VER}</div>
                       <div className="flex flex-row gap-2 mt-10">
                           <Button className="w-[150px] h-[34px] hover:bg-neutral-400 bg-[#FFFFFF] rounded-sm">
                               <p className="text-[12px] text-[#515151]">사용 약관</p>

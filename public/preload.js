@@ -31,6 +31,15 @@ contextBridge.exposeInMainWorld('electron', {
 
   fetchDataFromDB: (search, page) => ipcRenderer.invoke('fetch-data-from-db', search, page),
 
+  fetchDataSettingFromDB: (search, page) => ipcRenderer.invoke('fetch-data-setting-from-db', search, page),
+
+  // 삭제
+  deleteRows: (rowKeys) => ipcRenderer.send('delete-rows', rowKeys),
+
+  sendUpdateSetting: (field, value) => {
+    ipcRenderer.send('update-setting', { field, value });
+  },
+
   getImagesFromFolder: () => ipcRenderer.invoke('get-images-from-folder'),
 
   openImage: (imagePath) => ipcRenderer.invoke('open-image', imagePath),

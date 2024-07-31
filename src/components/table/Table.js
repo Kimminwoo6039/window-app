@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Spin, Empty } from 'antd';
+import {Button} from "../ui/button";
+import {useNavigate} from "react-router-dom";
 
 /**
  * 탐지현황 테이블 리스트
@@ -8,6 +10,7 @@ import { Table, Spin, Empty } from 'antd';
  * @returns {JSX.Element}
  */
 export default function TableComponent({ search }) {
+    const navigate = useNavigate();
     const defaultImage = require('../../images/no-image-found.png'); // 기본 이미지 경로
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -15,6 +18,7 @@ export default function TableComponent({ search }) {
     const [page, setPage] = useState(1); // 현재 페이지를 추적합니다.
     const [previewSrc, setPreviewSrc] = useState(null);
     const [previewAlt, setPreviewAlt] = useState(null);
+    const [row, setRow] = useState();
 
     const handleUpdateEach = (data) => {
         const mapping = {
@@ -25,7 +29,7 @@ export default function TableComponent({ search }) {
             '14': '남자 성기',
         };
 
-        return data.split(' ').map(item => mapping[item] || item).join(',');
+        return data.split(',').map(item => mapping[item] || item).join(',');
     };
 
     const handleOpenImage = (imagePath) => {
@@ -91,11 +95,11 @@ export default function TableComponent({ search }) {
         fetchData(1); // 처음 마운트될 때 데이터 가져오기
     }, [search]);
 
-    useEffect(() => {
-        if (page > 1) {
-            fetchData(page); // 페이지가 변경될 때마다 데이터 가져오기
-        }
-    }, [page]);
+    // useEffect(() => {
+    //     if (page > 1) {
+    //         fetchData(page); // 페이지가 변경될 때마다 데이터 가져오기
+    //     }
+    // }, [page]);
 
     const handleScroll = (event) => {
         const { scrollTop, scrollHeight, clientHeight } = event.target;
@@ -143,33 +147,66 @@ export default function TableComponent({ search }) {
         },
     ];
 
+    // 삭제
+    const handleOptionChange = async () => {
+        if (!row || row?.length === 0) {
+            alert('삭제할 항목을 선택해 주세요.');
+            return;
+        }
+
+        try {
+            // 선택된 행의 키를 기반으로 삭제 요청 보내기
+            await window.electron.deleteRows(row);
+
+            // 삭제 후 상태 업데이트
+            setItems((prevItems) => prevItems.filter(item => !row?.includes(item['HISTORY_SEQ'])));
+
+            // 선택된 행 리셋
+            setRow([]);
+        } catch (error) {
+            console.error('Error deleting rows:', error);
+        }
+    };
+
     const rowSelection = {
+        selectedRowKeys: row,
         onChange: (selectedRowKeys) => {
             console.log('Selected row keys:', selectedRowKeys);
+            setRow(selectedRowKeys)
         },
     };
 
     return (
-        <div className="scrollView" onScroll={handleScroll} style={{ height: '330px', overflowY: 'auto' }}>
-            <Table
-                className="p-0"
-                rowSelection={rowSelection}
-                dataSource={items.map(item => ({
-                    key: item['HISTORY_SEQ'],
-                    date: <p className="text-[10px]">{item['REG_DATE']}</p>,
-                    image: <ImagePreview src={item['EVENT_IMAGE']} alt="Sample Image"  />,
-                    // filename: <p className="text-[10px]">{item['FILE_NAME']}</p>,
-                    type: <p className="text-[10px]">{String(item['EVENT_OBJ'])}</p>,
-                    content: <p className="text-[10px] flex ml-1">{handleUpdateEach(item['EVENT_CODE'])}</p>,
-                }))}
-                columns={columns}
-                pagination={false}
-            />
-            {previewSrc && (
-                <div className="preview-container">
-                    <img src={previewSrc} alt={previewAlt} className="preview-image" />
-                </div>
-            )}
-        </div>
+        <>
+            <div className="scrollView" onScroll={handleScroll} style={{height: '330px', overflowY: 'auto'}}>
+                <Table
+                    className="p-0"
+                    rowSelection={rowSelection}
+                    dataSource={items.map(item => ({
+                        key: item['HISTORY_SEQ'],
+                        date: <p className="text-[10px]">{item['REG_DATE']}</p>,
+                        image: <ImagePreview src={item['EVENT_IMAGE']} alt="Sample Image"/>,
+                        // filename: <p className="text-[10px]">{item['FILE_NAME']}</p>,
+                        type: <p className="text-[10px]">{String(item['EVENT_CODE'])}</p>,
+                        content: <p className="text-[10px] flex ml-1">{handleUpdateEach(item['EVENT_CODE'])}</p>,
+                    }))}
+                    columns={columns}
+                    pagination={false}
+                />
+                {previewSrc && (
+                    <div className="preview-container">
+                        <img src={previewSrc} alt={previewAlt} className="preview-image"/>
+                    </div>
+                )}
+            </div>
+            <div className="flex flex-row justify-end ml-4 m-8">
+                <Button onClick={handleOptionChange} className="w-[80px] h-[34px] bg-[#FFFFFF] rounded-sm text-[#515151] text-[12px]">
+                    삭제
+                </Button>
+                {/*<Button className="w-[80px] h-[34px] rounded-sm bg-[#FFFFFF] text-[#515151] text-[12px]">*/}
+                {/*  오탐신고*/}
+                {/*</Button>*/}
+            </div>
+        </>
     );
 }

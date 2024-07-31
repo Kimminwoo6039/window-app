@@ -73,14 +73,6 @@ export default function Detection() {
             {items.length === 0 ? <BlankTable /> : <TableComponent search={search} />}
           </div>
         </main>
-        <div className="flex flex-row justify-end gap-2 m-10">
-          <Button className="w-[80px] h-[34px] bg-[#FFFFFF] rounded-sm text-[#515151] text-[12px]">
-            삭제
-          </Button>
-          <Button className="w-[80px] h-[34px] rounded-sm bg-[#FFFFFF] text-[#515151] text-[12px]">
-            오탐신고
-          </Button>
-        </div>
       </>
   );
 }

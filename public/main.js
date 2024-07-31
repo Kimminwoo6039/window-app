@@ -211,8 +211,9 @@ function dbConnection() {
     ];
 
     try {
-        // const dbPath = path.resolve(app.getAppPath(), 'meercatch.db')
-        const dbPath = path.join('D:', '/meercatch.db');
+
+         const dbPath = path.join(app.getPath('appData'), '/MEERCATCH_P/meercatch.db')
+        //const dbPath = path.join('D:', '/meercatch.db')
         log.info('DataBase 경로=', dbPath)
         //db.pragma("journal_mode = WAL");
         log.info('db', db)
@@ -270,28 +271,53 @@ function dbConnection() {
     }
 }
 
-
-// Handle the IPC request from renderer process
-// ipcMain.handle('fetch-data-from-db', async (event, search, page) => {
-//     try {
-//         const pageSize = 20; // Number of items per page
-//         const offset = (page - 1) * pageSize;
-//         const query = `
-//             SELECT * FROM T_HISTORY
-//             WHERE EVENT_CODE LIKE ?
-//             LIMIT ? OFFSET ?
-//         `;
-//         const results = await db.prepare(query, [`%${search}%`, pageSize, offset]).all();
-//         console.log(results)
-//         // Ensure the data is serializable
-//         return results
-//     } catch (error) {
-//         console.error('Error fetching data from database:', error);
-//         throw error; // Propagate the error
-//     }
-// });
+// 정책 삭제
+ipcMain.on('delete-rows', (event, rowKeys) => {
+    try {
+        // 삭제 쿼리
+        const query = 'DELETE FROM T_HISTORY WHERE HISTORY_SEQ IN (' + rowKeys.map(() => '?').join(', ') + ')';
+        const stmt = db.prepare(query);
+        stmt.run(...rowKeys);
+        console.log('Rows deleted:', rowKeys);
+    } catch (error) {
+        console.error('Error deleting rows:', error);
+    }
+});
 
 
+// 정책 세팅 페이지 업데이트
+// IPC 메시지 핸들러
+ipcMain.on('update-setting', (event, { field, value }) => {
+    try {
+        const query = `UPDATE T_POLICY SET ${field} = ?`;
+        const stmt = db.prepare(query);
+        stmt.run(value);
+        console.log(`Setting updated: ${field} = ${value}`);
+    } catch (error) {
+        console.error('DB update error:', error);
+    }
+});
+
+
+// 정책 세팅 페이지 리스트
+ipcMain.handle('fetch-data-setting-from-db', async (event, search, page) => {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT * FROM T_POLICY 
+        `;
+
+        try {
+            // Note: `db.prepare().all()` is used here for `better-sqlite3`
+            const results = db.prepare(query).all();
+            resolve(results);
+        } catch (err) {
+            reject(err);
+        }
+    });
+});
+
+
+// 검역소
 ipcMain.handle('fetch-data-from-db', async (event, search, page) => {
     return new Promise((resolve, reject) => {
         const pageSize = 10 // Number of items per page
@@ -382,7 +408,7 @@ function createWindow() {
     });
 
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
     if (!app.requestSingleInstanceLock()) {
         app.quit(); // 두 번째 인스턴스가 실행되려고 하면 애플리케이션 종료
